@@ -19,9 +19,7 @@ import { TextureButton } from "@/components/ui/texture-button"
 import { useRegister } from "@/hooks/auth/useRegister"
 
 const registerSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  username: z.string().min(3, "Username must be at least 3 characters"),
+  name: z.string(),
   email: z.string().email("Invalid email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 })
@@ -42,7 +40,7 @@ const RegisterForm = () => {
 
   const onSubmit = (data: RegisterFormValues) => {
     mutation.mutate(data);
-	reset()
+    reset()
   }
 
   return (
@@ -68,33 +66,14 @@ const RegisterForm = () => {
                 >
                   <div className="flex justify-between gap-2">
                     <div className="w-full">
-                      <Label htmlFor="firstName">First name</Label>
-                      <Input id="firstName" {...register("firstName")} />
-                      {errors.firstName && (
+                      <Label htmlFor="name">Name</Label>
+                      <Input id="firstName" {...register("name")} />
+                      {errors.name && (
                         <p className="text-sm text-red-500">
-                          {errors.firstName.message}
+                          {errors.name.message}
                         </p>
                       )}
                     </div>
-                    <div className="w-full">
-                      <Label htmlFor="lastName">Last name</Label>
-                      <Input id="lastName" {...register("lastName")} />
-                      {errors.lastName && (
-                        <p className="text-sm text-red-500">
-                          {errors.lastName.message}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="username">Username</Label>
-                    <Input id="username" {...register("username")} />
-                    {errors.username && (
-                      <p className="text-sm text-red-500">
-                        {errors.username.message}
-                      </p>
-                    )}
                   </div>
 
                   <div>
