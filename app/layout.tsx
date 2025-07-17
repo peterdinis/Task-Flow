@@ -4,6 +4,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import Navigation from "@/components/shared/Navigation";
 import ScrollToTop from "@/components/shared/ScrollToTop";
+import QueryProvider from "@/components/providers/QueryProvider";
+import { Toaster } from "sonner";
 
 const ubuntu = Ubuntu({
 	weight: "500",
@@ -31,9 +33,12 @@ export default function RootLayout({
 					enableSystem
 					disableTransitionOnChange
 				>
-					<Navigation />
-					{children}
-					<ScrollToTop />
+					<QueryProvider>
+						<Navigation />
+						{children}
+						<ScrollToTop />
+						<Toaster />
+					</QueryProvider>
 				</ThemeProvider>
 			</body>
 		</html>
