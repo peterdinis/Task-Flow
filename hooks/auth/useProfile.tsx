@@ -2,9 +2,9 @@
 
 import { useQuery } from '@tanstack/react-query'
 
-export const useAuth = (token?: string | null) => {
+export const useProfile = (token?: string | null) => {
   return useQuery({
-    queryKey: ['auth', token],
+    queryKey: ['myProfile', token],
     queryFn: async () => {
       const res = await fetch('/api/auth/profile', {
         headers: {

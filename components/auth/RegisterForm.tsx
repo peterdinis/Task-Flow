@@ -47,7 +47,7 @@ const RegisterForm = () => {
 
   return (
     <div className="flex items-center justify-center py-4">
-      <div className="dark:bg-primary h-full rounded-md">
+      <div className="dark:bg-background h-full rounded-md">
         <div className="grid grid-cols-1 items-start justify-center gap-6 rounded-lg p-2 md:p-8">
           <div className="col-span-1 grid items-start gap-6 lg:col-span-1">
             <TextureCardStyled>
