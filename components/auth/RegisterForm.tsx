@@ -67,7 +67,7 @@ const RegisterForm = () => {
                   <div className="flex justify-between gap-2">
                     <div className="w-full">
                       <Label htmlFor="name">Name</Label>
-                      <Input id="firstName" {...register("name")} />
+                      <Input id="name" {...register("name")} />
                       {errors.name && (
                         <p className="text-sm text-red-500">
                           {errors.name.message}
