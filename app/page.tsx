@@ -1,9 +1,14 @@
+import FeaturesSection from "@/components/hero/FeaturesSection";
+import HeroSection from "@/components/hero/HeroSection";
+import StatsSection from "@/components/hero/StatsSection";
 import { NextPage } from "next";
 
 const Homepage: NextPage = () => {
   return (
     <>
-      <h1>Hello World</h1>
+        <HeroSection />
+        <StatsSection />
+        <FeaturesSection />
     </>
   )
 }
