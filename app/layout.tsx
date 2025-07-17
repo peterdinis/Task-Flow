@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Ubuntu } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/shared/Navigation";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 
 const ubuntu = Ubuntu({
   weight: "500",
@@ -19,12 +20,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${ubuntu.className} antialiased min-h-screen bg-background`}
       >
-        <Navigation />
-        {children}
+        <ThemeProvider 
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+            <Navigation />
+            {children}
+        </ThemeProvider>
       </body>
     </html>
   );
