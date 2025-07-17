@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import { handle } from '@hono/node-server/vercel'
 import type { PageConfig } from 'next'
+import { auth } from '../auth/route'
 
 export const config: PageConfig = {
   runtime: 'edge',
@@ -9,10 +10,10 @@ export const config: PageConfig = {
 const app = new Hono().basePath('/api')
 
 app.get('/hello', (c) => {
-  return c.json({
-    message: 'Hello Next.js!',
-  })
+  return c.json({ message: 'Hello Next.js!' })
 })
+
+app.route('/auth/*', auth)
 
 export const GET = handle(app)
 export const POST = handle(app)
