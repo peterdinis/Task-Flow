@@ -3,7 +3,7 @@ import { handle } from 'hono/vercel'
 import { auth } from '../auth/route'
 import { board } from '../boards/route'
 
-const app = new Hono()
+const app = new Hono().basePath("/api")
 
 app.route('/auth', auth)
 app.route('/boards', board)

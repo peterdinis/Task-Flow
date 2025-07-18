@@ -1,6 +1,7 @@
 import { db } from '@/lib/prisma'
 import { boardSchema } from '@/schemas/boardSchema'
 import { Hono } from 'hono'
+import { handle } from 'hono/vercel'
 
 export const board = new Hono()
 
@@ -44,3 +45,9 @@ board.post('/', async (c) => {
 
   return c.json(board, 201)
 })
+
+export const GET = handle(board)
+export const POST = handle(board)
+export const PUT = handle(board)
+export const DELETE = handle(board)
+export const PATCH = handle(board)
