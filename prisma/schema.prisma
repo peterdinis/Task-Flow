@@ -9,28 +9,30 @@ datasource db {
 }
 
 model User {
-  id       String               @id @default(cuid())
-  name     String
-  email    String               @unique
-  password String
-  boards   Board[]              @relation("UserBoards")
-  cards    Card[]               @relation("CardMembers")
-  comments Comment[]
-  meetings MeetingParticipant[]
+  id              String               @id @default(cuid())
+  name            String
+  email           String               @unique
+  password        String
+  boards          Board[]              @relation("UserBoards") // owned boards
+  projectBoards   Board[]              @relation("BoardMembers") // member boards
+  cards           Card[]               @relation("CardMembers")
+  comments        Comment[]
+  meetings        MeetingParticipant[]
 }
 
 model Board {
-  id          String    @id @default(cuid())
-  title       String
-  description String
-  ownerId     String
-  progress    Int       @default(0)
-  projectColor String   @default("#aabbcc")
-  owner       User      @relation("UserBoards", fields: [ownerId], references: [id])
-  lists       List[]
-  meetings    Meeting[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id            String    @id @default(cuid())
+  title         String
+  description   String
+  ownerId       String
+  progress      Int       @default(0)
+  projectColor  String    @default("#aabbcc")
+  owner         User      @relation("UserBoards", fields: [ownerId], references: [id])
+  members       User[]    @relation("BoardMembers") // <--- many-to-many
+  lists         List[]
+  meetings      Meeting[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model List {

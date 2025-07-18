@@ -14,7 +14,7 @@ board.get('/', async (c) => {
     db.board.findMany({
       skip,
       take: limit,
-      include: { owner: true },
+      include: { owner: true, members: true },
       orderBy: { createdAt: 'desc' },
     }),
     db.board.count(),
