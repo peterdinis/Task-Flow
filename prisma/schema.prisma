@@ -9,86 +9,86 @@ datasource db {
 }
 
 model User {
-  id         String                 @id @default(cuid())
-  name       String
-  email      String                 @unique
-  password   String
-  boards     Board[]                @relation("UserBoards")
-  cards      Card[]                 @relation("CardMembers") 
-  comments   Comment[]
-  meetings   MeetingParticipant[]
+  id       String               @id @default(cuid())
+  name     String
+  email    String               @unique
+  password String
+  boards   Board[]              @relation("UserBoards")
+  cards    Card[]               @relation("CardMembers")
+  comments Comment[]
+  meetings MeetingParticipant[]
 }
 
 model Board {
-  id         String                 @id @default(cuid())
-  title      String
+  id          String    @id @default(cuid())
+  title       String
   description String
-  ownerId    String
-  owner      User                  @relation("UserBoards", fields: [ownerId], references: [id])
-  lists      List[]
-  meetings   Meeting[]
-  createdAt  DateTime              @default(now())
-  updatedAt  DateTime              @updatedAt
+  ownerId     String
+  owner       User      @relation("UserBoards", fields: [ownerId], references: [id])
+  lists       List[]
+  meetings    Meeting[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model List {
-  id         String                 @id @default(cuid())
-  title      String
-  boardId    String
-  board      Board                 @relation(fields: [boardId], references: [id])
-  cards      Card[]
-  position   Int
-  createdAt  DateTime              @default(now())
-  updatedAt  DateTime              @updatedAt
+  id        String   @id @default(cuid())
+  title     String
+  boardId   String
+  board     Board    @relation(fields: [boardId], references: [id])
+  cards     Card[]
+  position  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Card {
-  id          String                @id @default(cuid())
+  id          String    @id @default(cuid())
   title       String
   description String?
   listId      String
-  list        List                 @relation(fields: [listId], references: [id])
+  list        List      @relation(fields: [listId], references: [id])
   position    Int
-  members     User[]               @relation("CardMembers")
-  labels      Label[]              @relation("CardLabels") 
+  members     User[]    @relation("CardMembers")
+  labels      Label[]   @relation("CardLabels")
   comments    Comment[]
-  createdAt   DateTime             @default(now())
-  updatedAt   DateTime             @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Label {
-  id      String                   @id @default(cuid())
-  name    String
-  color   String
-  cards   Card[]                  @relation("CardLabels")
+  id    String @id @default(cuid())
+  name  String
+  color String
+  cards Card[] @relation("CardLabels")
 }
 
 model Comment {
-  id         String                @id @default(cuid())
-  message    String
-  cardId     String
-  card       Card                 @relation(fields: [cardId], references: [id])
-  authorId   String
-  author     User                 @relation(fields: [authorId], references: [id])
-  createdAt  DateTime             @default(now())
+  id        String   @id @default(cuid())
+  message   String
+  cardId    String
+  card      Card     @relation(fields: [cardId], references: [id])
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
 }
 
 model Meeting {
-  id           String              @id @default(cuid())
+  id           String               @id @default(cuid())
   title        String
   description  String?
   startTime    DateTime
   endTime      DateTime
   boardId      String
-  board        Board               @relation(fields: [boardId], references: [id])
+  board        Board                @relation(fields: [boardId], references: [id])
   participants MeetingParticipant[]
-  createdAt    DateTime            @default(now())
+  createdAt    DateTime             @default(now())
 }
 
 model MeetingParticipant {
-  id         String                @id @default(cuid())
-  userId     String
-  meetingId  String
-  user       User                 @relation(fields: [userId], references: [id])
-  meeting    Meeting              @relation(fields: [meetingId], references: [id])
+  id        String  @id @default(cuid())
+  userId    String
+  meetingId String
+  user      User    @relation(fields: [userId], references: [id])
+  meeting   Meeting @relation(fields: [meetingId], references: [id])
 }
