@@ -4,10 +4,6 @@ import { auth } from '../auth/route'
 
 const app = new Hono().basePath('/api')
 
-app.get('/hello', (c) => {
-  return c.json({ message: 'Hello Next.js!' })
-})
-
 app.route('/auth', auth)
 
 export const GET = handle(app)

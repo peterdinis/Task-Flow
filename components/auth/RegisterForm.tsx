@@ -1,9 +1,10 @@
 "use client"
 
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { ArrowRight, Merge } from "lucide-react"
+import { ArrowRight, Eye, EyeOff, Merge } from "lucide-react"
 
 import {
   TextureCardContent,
@@ -36,10 +37,12 @@ const RegisterForm = () => {
     resolver: zodResolver(registerSchema),
   })
 
+  const [showPassword, setShowPassword] = useState(false)
+
   const mutation = useRegister()
 
   const onSubmit = (data: RegisterFormValues) => {
-    mutation.mutate(data);
+    mutation.mutate(data)
     reset()
   }
 
@@ -88,12 +91,26 @@ const RegisterForm = () => {
 
                   <div>
                     <Label htmlFor="password">Password</Label>
-                    <Input
-                      className="mt-4"
-                      id="password"
-                      type="password"
-                      {...register("password")}
-                    />
+                    <div className="relative">
+                      <Input
+                        className="mt-4 pr-10"
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        {...register("password")}
+                      />
+                      <button
+                        type="button"
+                        className="absolute right-3 top-[50%] translate-y-[-50%] text-muted-foreground"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        tabIndex={-1}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
                     {errors.password && (
                       <p className="text-sm text-red-500">
                         {errors.password.message}
