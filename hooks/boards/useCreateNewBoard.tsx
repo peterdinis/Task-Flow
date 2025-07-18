@@ -12,7 +12,7 @@ export const useCreateBoard = () => {
       progress: number
       ownerId: string
     }) => {
-      const res = await fetch('/boards', {
+      const res = await fetch('/api/boards', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newBoard),
@@ -26,7 +26,6 @@ export const useCreateBoard = () => {
       return res.json()
     },
     onSuccess: () => {
-      // Invalidate board list to refetch updated data
       queryClient.invalidateQueries({ queryKey: ['boards'] })
     },
   })
