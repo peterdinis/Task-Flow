@@ -12,6 +12,7 @@ model User {
   id         String                 @id @default(cuid())
   name       String
   email      String                 @unique
+  password   String
   boards     Board[]                @relation("UserBoards") // owned boards
   cards      Card[]                 @relation("CardMembers") // assigned to cards
   comments   Comment[]
