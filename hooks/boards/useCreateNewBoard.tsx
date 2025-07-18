@@ -12,7 +12,7 @@ export const useCreateBoard = () => {
       progress: number
       ownerId: string
     }) => {
-      const res = await fetch('/api/boards', {
+      const res = await fetch('/boards', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newBoard),
