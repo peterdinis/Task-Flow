@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { TextureButton } from "@/components/ui/texture-button"
 import { useRegister } from "@/hooks/auth/useRegister"
+import {toast} from "sonner"
 
 const registerSchema = z.object({
   name: z.string(),

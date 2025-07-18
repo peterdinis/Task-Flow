@@ -1,10 +1,25 @@
+"use client"
+
 import { CheckCircle } from "lucide-react";
 import Link from "next/link";
-import type { FC } from "react";
+import { useEffect, useState, type FC } from "react";
 import { Button } from "../ui/button";
 import ModeToggle from "./ModeToggle";
+import ProfileDropdown from "../auth/ProfileDropdown";
+import { useProfile } from "@/hooks/auth/useProfile";
 
 const Navigation: FC = () => {
+	const [token, setToken] = useState<string | null>(null)
+
+	useEffect(() => {
+		const storedToken = localStorage.getItem("token")
+		setToken(storedToken)
+	}, [])
+
+	const { data } = useProfile(token)
+
+	const user = data?.user
+
 	return (
 		<header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
 			<div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -45,6 +60,7 @@ const Navigation: FC = () => {
 							<Button>Get Started</Button>
 						</Link>
 						<ModeToggle />
+						{user && <ProfileDropdown />}
 					</div>
 				</div>
 			</div>

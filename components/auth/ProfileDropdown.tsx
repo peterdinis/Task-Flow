@@ -1,6 +1,6 @@
 "use client"
 
-import { FC } from "react"
+import { FC, useEffect, useState } from "react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,11 +10,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useEffect, useState } from "react"
 import { useProfile } from "@/hooks/auth/useProfile"
+import { useRouter } from "next/navigation"
+import {toast} from "sonner"
 
 const ProfileDropdown: FC = () => {
   const [token, setToken] = useState<string | null>(null)
+  const router = useRouter()
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token")
@@ -24,6 +26,12 @@ const ProfileDropdown: FC = () => {
   const { data, isLoading } = useProfile(token)
 
   const user = data?.user
+
+  const handleLogout = () => {
+    localStorage.removeItem("token")
+    toast.success("Succesfully logout")
+    router.push("/login")
+  }
 
   return (
     <DropdownMenu>
@@ -40,10 +48,7 @@ const ProfileDropdown: FC = () => {
           {isLoading ? "Loading..." : user?.name || "My Account"}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Profile</DropdownMenuItem>
-        <DropdownMenuItem>Billing</DropdownMenuItem>
-        <DropdownMenuItem>Team</DropdownMenuItem>
-        <DropdownMenuItem>Subscription</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
