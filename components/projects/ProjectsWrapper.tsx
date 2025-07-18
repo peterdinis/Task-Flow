@@ -1,6 +1,6 @@
 "use client"
 
-import { FC, useMemo, useState } from "react";
+import { FC, Key, useState } from "react";
 import {
   SidebarProvider,
   SidebarInset,
@@ -24,6 +24,7 @@ import {
   Users,
   Filter,
   Search,
+  Loader2,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -39,80 +40,16 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { useAllBoards } from "@/hooks/boards/useAllBoards";
 
 const ProjectsWrapper: FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 3;
 
-  const projects = [
-    {
-      id: 1,
-      name: "Website Redesign",
-      description: "Complete overhaul of the company website with modern design",
-      status: "In Progress",
-      progress: 65,
-      dueDate: "2024-02-15",
-      team: ["JD", "JS", "MJ"],
-      color: "bg-blue-500",
-    },
-    {
-      id: 2,
-      name: "Mobile App",
-      description: "Native mobile application for iOS and Android",
-      status: "Planning",
-      progress: 20,
-      dueDate: "2024-03-20",
-      team: ["SW", "JD"],
-      color: "bg-green-500",
-    },
-    {
-      id: 3,
-      name: "Marketing Campaign",
-      description: "Q1 digital marketing campaign across all channels",
-      status: "Review",
-      progress: 90,
-      dueDate: "2024-01-30",
-      team: ["JS", "MJ", "SW"],
-      color: "bg-purple-500",
-    },
-    {
-      id: 4,
-      name: "Data Migration",
-      description: "Migrate legacy data to new cloud infrastructure",
-      status: "Completed",
-      progress: 100,
-      dueDate: "2024-01-15",
-      team: ["JD", "MJ"],
-      color: "bg-gray-500",
-    },
-    {
-      id: 5,
-      name: "API Development",
-      description: "REST API for third-party integrations",
-      status: "In Progress",
-      progress: 45,
-      dueDate: "2024-02-28",
-      team: ["MJ", "SW"],
-      color: "bg-orange-500",
-    },
-    {
-      id: 6,
-      name: "Security Audit",
-      description: "Comprehensive security review and penetration testing",
-      status: "Planning",
-      progress: 10,
-      dueDate: "2024-04-10",
-      team: ["JD"],
-      color: "bg-red-500",
-    },
-  ];
+  const { data, isLoading, isError } = useAllBoards({ page: currentPage, limit: pageSize });
 
-  const totalPages = Math.ceil(projects.length / pageSize);
-
-  const paginatedProjects = useMemo(() => {
-    const start = (currentPage - 1) * pageSize;
-    return projects.slice(start, start + pageSize);
-  }, [currentPage, projects]);
+  const paginatedProjects = data?.data ?? [];
+  const totalPages = data?.totalPages ?? 1;
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -128,6 +65,12 @@ const ProjectsWrapper: FC = () => {
         return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
     }
   };
+
+  if (isError) return <p className="text-red-800 font-bold text-base dark:text-red-200 leading-[130%]">
+    Failed to fetch projects
+  </p>
+
+  if (isLoading) return <Loader2 className="animate-spin h-8 w-8" />
 
   return (
     <SidebarProvider>
@@ -151,7 +94,6 @@ const ProjectsWrapper: FC = () => {
               </div>
             </div>
 
-            {/* Filters and Search */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               <div className="relative flex-1 max-w-sm">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -179,7 +121,7 @@ const ProjectsWrapper: FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
-              {paginatedProjects.map((project) => (
+              {paginatedProjects.map((project: any) => (
                 <Card key={project.id} className="hover:shadow-lg transition-shadow cursor-pointer">
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between gap-2">
@@ -222,7 +164,7 @@ const ProjectsWrapper: FC = () => {
                         <div className="flex items-center">
                           <Users className="h-4 w-4 mr-1" />
                           <div className="flex -space-x-1">
-                            {project.team.map((member, index) => (
+                            {project.team.map((member: any, index: Key) => (
                               <Avatar key={index} className="w-6 h-6 border-2 border-background">
                                 <AvatarFallback className="text-xs bg-gradient-to-br from-blue-500 to-purple-500 text-white">
                                   {member}

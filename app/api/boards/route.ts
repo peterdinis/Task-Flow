@@ -1,21 +1,32 @@
 import { db } from '@/lib/prisma'
+import { boardSchema } from '@/schemas/boardSchema'
 import { Hono } from 'hono'
-import {z} from "zod"
-
-const boardSchema = z.object({
-  title: z.string().min(1),
-  description: z.string().min(1),
-  ownerId: z.string(),
-})
 
 export const board = new Hono()
 
 board.get('/', async (c) => {
-  const boards = await db.board.findMany({
-    include: { owner: true },
-    orderBy: { createdAt: 'desc' },
+  const page = Number(c.req.query('page') || '1')
+  const limit = Number(c.req.query('limit') || '10')
+
+  const skip = (page - 1) * limit
+
+  const [boards, total] = await Promise.all([
+    db.board.findMany({
+      skip,
+      take: limit,
+      include: { owner: true, members: true },
+      orderBy: { createdAt: 'desc' },
+    }),
+    db.board.count(),
+  ])
+
+  return c.json({
+    data: boards,
+    page,
+    limit,
+    total,
+    totalPages: Math.ceil(total / limit),
   })
-  return c.json(boards)
 })
 
 
