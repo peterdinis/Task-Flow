@@ -24,6 +24,8 @@ model Board {
   title       String
   description String
   ownerId     String
+  progress    Int       @default(0)
+  projectColor String   @default("#aabbcc")
   owner       User      @relation("UserBoards", fields: [ownerId], references: [id])
   lists       List[]
   meetings    Meeting[]
