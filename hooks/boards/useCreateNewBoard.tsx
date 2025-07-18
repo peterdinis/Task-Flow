@@ -26,7 +26,6 @@ export const useCreateBoard = () => {
       return res.json()
     },
     onSuccess: () => {
-      // Invalidate board list to refetch updated data
       queryClient.invalidateQueries({ queryKey: ['boards'] })
     },
   })
