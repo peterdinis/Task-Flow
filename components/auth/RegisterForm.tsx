@@ -67,7 +67,7 @@ const RegisterForm = () => {
                   <div className="flex justify-between gap-2">
                     <div className="w-full">
                       <Label htmlFor="name">Name</Label>
-                      <Input id="name" {...register("name")} />
+                      <Input className="mt-4" id="name" {...register("name")} />
                       {errors.name && (
                         <p className="text-sm text-red-500">
                           {errors.name.message}
@@ -78,7 +78,7 @@ const RegisterForm = () => {
 
                   <div>
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" {...register("email")} />
+                    <Input className="mt-4" id="email" {...register("email")} />
                     {errors.email && (
                       <p className="text-sm text-red-500">
                         {errors.email.message}
@@ -89,6 +89,7 @@ const RegisterForm = () => {
                   <div>
                     <Label htmlFor="password">Password</Label>
                     <Input
+                      className="mt-4"
                       id="password"
                       type="password"
                       {...register("password")}

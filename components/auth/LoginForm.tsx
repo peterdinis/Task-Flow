@@ -66,6 +66,7 @@ const LoginForm: FC = () => {
 											<Label htmlFor="email">Email</Label>
 											<Input
 												id="email"
+												className="mt-4"
 												type="email"
 												{...register("email")}
 												disabled={isSubmitting}
@@ -80,6 +81,7 @@ const LoginForm: FC = () => {
 											<Input
 												id="password"
 												type="password"
+												className="mt-4"
 												{...register("password")}
 												disabled={isSubmitting}
 											/>
