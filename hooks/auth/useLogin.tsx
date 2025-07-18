@@ -26,7 +26,7 @@ export const useLogin = () => {
         },
         onSuccess: () => {
             toast.success("Login successful")
-            router.push("/profile")
+            router.push("/dashboard")
         },
     })
 }

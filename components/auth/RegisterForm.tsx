@@ -141,11 +141,6 @@ const RegisterForm = () => {
                   </span>
                 </div>
               </TextureCardFooter>
-              <div className="dark:bg-neutral-800 bg-stone-100 pt-px rounded-b-[20px] overflow-hidden">
-                <div className="py-2 px-2 text-center text-xs">
-                  Secured by Supabase
-                </div>
-              </div>
             </TextureCardStyled>
           </div>
         </div>

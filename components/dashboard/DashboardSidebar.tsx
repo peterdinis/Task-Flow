@@ -1,3 +1,5 @@
+"use client"
+
 import {
 	Calendar,
 	FolderOpen,
@@ -8,7 +10,7 @@ import {
 	Users,
 } from "lucide-react";
 import Link from "next/link";
-import type { FC } from "react";
+import { useEffect, useState, type FC } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,8 +25,20 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useProfile } from "@/hooks/auth/useProfile";
 
 const DashboardSidebar: FC = () => {
+	const [token, setToken] = useState<string | null>(null)
+
+	useEffect(() => {
+		const storedToken = localStorage.getItem("token")
+		setToken(storedToken)
+	}, [])
+
+	const { data } = useProfile(token)
+
+	const user = data?.user
+
 	const navigation = [
 		{ title: "Dashboard", url: "/dashboard", icon: Home },
 		{ title: "Projects", url: "/projects", icon: FolderOpen },
@@ -146,8 +160,9 @@ const DashboardSidebar: FC = () => {
 						</AvatarFallback>
 					</Avatar>
 					<div className="flex-1">
-						<div className="text-sm font-medium">Your Account</div>
-						<div className="text-xs text-gray-500">Free Plan</div>
+						<div className="text-sm font-medium">
+							{user?.email!}
+						</div>
 					</div>
 				</div>
 			</SidebarFooter>
