@@ -1,6 +1,6 @@
 "use client"
 
-import { FC, Key, useState } from "react";
+import { FC, Key, useEffect, useState } from "react";
 import {
   SidebarProvider,
   SidebarInset,
@@ -41,15 +41,48 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { useAllBoards } from "@/hooks/boards/useAllBoards";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useCreateBoard } from "@/hooks/boards/useCreateNewBoard";
+import { useProfile } from "@/hooks/auth/useProfile";
+import { toast } from "sonner"
 
 const ProjectsWrapper: FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 3;
-
   const { data, isLoading, isError } = useAllBoards({ page: currentPage, limit: pageSize });
-
   const paginatedProjects = data?.data ?? [];
   const totalPages = data?.totalPages ?? 1;
+
+  const [token, setToken] = useState<string | null>(null)
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token")
+    setToken(storedToken)
+  }, [])
+
+  const { data: userData } = useProfile(token)
+
+  const user = userData?.user
+
+  const [open, setOpen] = useState(false);
+  const [form, setForm] = useState({
+    title: '',
+    description: '',
+    progress: 0,
+    ownerId: user?.id
+  });
+
+  const createBoard = useCreateBoard();
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -80,10 +113,61 @@ const ProjectsWrapper: FC = () => {
           <header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b lg:px-6">
             <SidebarTrigger className="-ml-1" />
             <div className="flex-1" />
-            <Button size="sm" className="ml-auto">
-              <Plus className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">New Project</span>
-            </Button>
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm" className="ml-auto">
+                  <Plus className="h-4 w-4 mr-2" />
+                  <span className="hidden sm:inline">New Project</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create New Project</DialogTitle>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="title">Title</Label>
+                    <Input
+                      id="title"
+                      value={form.title}
+                      onChange={(e) => setForm({ ...form, title: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea
+                      id="description"
+                      value={form.description}
+                      onChange={(e) => setForm({ ...form, description: e.target.value })}
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button
+                      onClick={async () => {
+                        try {
+                          await createBoard.mutateAsync(form);
+                          setOpen(false);
+                          setForm({ title: '', description: '', progress: 0, ownerId: '1' });
+                          toast.success("New project was created")
+                        } catch (err) {
+                          console.error(err);
+                          alert(err instanceof Error ? err.message : 'Failed to create project');
+                        }
+                      }}
+                      disabled={createBoard.isPending}
+                    >
+                      {createBoard.isPending ? (
+                        <Loader2 className="animate-spin h-4 w-4 mr-2" />
+                      ) : (
+                        'Create'
+                      )}
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </header>
 
           <div className="flex-1 space-y-4 p-4 lg:p-6">
