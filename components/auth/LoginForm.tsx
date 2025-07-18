@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Merge } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, Merge } from "lucide-react";
 import type { FC } from "react";
 import {
 	TextureCardContent,
@@ -18,6 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { useLogin } from "@/hooks/auth/useLogin";
+import { useState } from "react";
 
 const loginSchema = z.object({
 	email: z.string().email({ message: "Invalid email address" }),
@@ -32,6 +33,7 @@ const LoginForm: FC = () => {
 	});
 
 	const login = useLogin();
+	const [showPassword, setShowPassword] = useState(false);
 
 	const onSubmit = async (data: LoginSchema) => {
 		try {
@@ -66,6 +68,7 @@ const LoginForm: FC = () => {
 											<Label htmlFor="email">Email</Label>
 											<Input
 												id="email"
+												className="mt-4"
 												type="email"
 												{...register("email")}
 												disabled={isSubmitting}
@@ -77,12 +80,27 @@ const LoginForm: FC = () => {
 
 										<div>
 											<Label htmlFor="password">Password</Label>
-											<Input
-												id="password"
-												type="password"
-												{...register("password")}
-												disabled={isSubmitting}
-											/>
+											<div className="relative">
+												<Input
+													id="password"
+													type={showPassword ? "text" : "password"}
+													className="mt-4 pr-10"
+													{...register("password")}
+													disabled={isSubmitting}
+												/>
+												<button
+													type="button"
+													className="absolute right-3 top-[50%] translate-y-[-50%] text-muted-foreground"
+													onClick={() => setShowPassword((prev) => !prev)}
+													tabIndex={-1}
+												>
+													{showPassword ? (
+														<EyeOff className="h-4 w-4" />
+													) : (
+														<Eye className="h-4 w-4" />
+													)}
+												</button>
+											</div>
 											{errors.password && (
 												<p className="text-xs text-red-500 mt-1">{errors.password.message}</p>
 											)}
@@ -107,11 +125,6 @@ const LoginForm: FC = () => {
 										Don't have an account? <span className="text-primary">Sign up</span>
 									</div>
 								</TextureCardFooter>
-								<div className="dark:bg-neutral-800 bg-stone-100 pt-px rounded-b-[20px] overflow-hidden ">
-									<div className="flex flex-col items-center justify-center py-2 px-2 text-center text-xs">
-										Secured by Supabase
-									</div>
-								</div>
 							</TextureCardStyled>
 						</div>
 					</div>

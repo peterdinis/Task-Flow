@@ -1,9 +1,10 @@
 "use client"
 
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { ArrowRight, Merge } from "lucide-react"
+import { ArrowRight, Eye, EyeOff, Merge } from "lucide-react"
 
 import {
   TextureCardContent,
@@ -17,11 +18,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { TextureButton } from "@/components/ui/texture-button"
 import { useRegister } from "@/hooks/auth/useRegister"
+import {toast} from "sonner"
 
 const registerSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  username: z.string().min(3, "Username must be at least 3 characters"),
+  name: z.string(),
   email: z.string().email("Invalid email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 })
@@ -38,11 +38,13 @@ const RegisterForm = () => {
     resolver: zodResolver(registerSchema),
   })
 
+  const [showPassword, setShowPassword] = useState(false)
+
   const mutation = useRegister()
 
   const onSubmit = (data: RegisterFormValues) => {
-    mutation.mutate(data);
-	reset()
+    mutation.mutate(data)
+    reset()
   }
 
   return (
@@ -68,38 +70,19 @@ const RegisterForm = () => {
                 >
                   <div className="flex justify-between gap-2">
                     <div className="w-full">
-                      <Label htmlFor="firstName">First name</Label>
-                      <Input id="firstName" {...register("firstName")} />
-                      {errors.firstName && (
+                      <Label htmlFor="name">Name</Label>
+                      <Input className="mt-4" id="name" {...register("name")} />
+                      {errors.name && (
                         <p className="text-sm text-red-500">
-                          {errors.firstName.message}
+                          {errors.name.message}
                         </p>
                       )}
                     </div>
-                    <div className="w-full">
-                      <Label htmlFor="lastName">Last name</Label>
-                      <Input id="lastName" {...register("lastName")} />
-                      {errors.lastName && (
-                        <p className="text-sm text-red-500">
-                          {errors.lastName.message}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="username">Username</Label>
-                    <Input id="username" {...register("username")} />
-                    {errors.username && (
-                      <p className="text-sm text-red-500">
-                        {errors.username.message}
-                      </p>
-                    )}
                   </div>
 
                   <div>
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" {...register("email")} />
+                    <Input className="mt-4" id="email" {...register("email")} />
                     {errors.email && (
                       <p className="text-sm text-red-500">
                         {errors.email.message}
@@ -109,11 +92,26 @@ const RegisterForm = () => {
 
                   <div>
                     <Label htmlFor="password">Password</Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      {...register("password")}
-                    />
+                    <div className="relative">
+                      <Input
+                        className="mt-4 pr-10"
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        {...register("password")}
+                      />
+                      <button
+                        type="button"
+                        className="absolute right-3 top-[50%] translate-y-[-50%] text-muted-foreground"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        tabIndex={-1}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
                     {errors.password && (
                       <p className="text-sm text-red-500">
                         {errors.password.message}
@@ -143,11 +141,6 @@ const RegisterForm = () => {
                   </span>
                 </div>
               </TextureCardFooter>
-              <div className="dark:bg-neutral-800 bg-stone-100 pt-px rounded-b-[20px] overflow-hidden">
-                <div className="py-2 px-2 text-center text-xs">
-                  Secured by Supabase
-                </div>
-              </div>
             </TextureCardStyled>
           </div>
         </div>
