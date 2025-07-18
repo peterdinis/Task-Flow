@@ -6,7 +6,7 @@ export const useProfile = (token?: string | null) => {
   return useQuery({
     queryKey: ['myProfile', token],
     queryFn: async () => {
-      const res = await fetch('/profile', {
+      const res = await fetch('/api/profile', {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
