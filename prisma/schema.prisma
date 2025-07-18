@@ -13,8 +13,8 @@ model User {
   name       String
   email      String                 @unique
   password   String
-  boards     Board[]                @relation("UserBoards") // owned boards
-  cards      Card[]                 @relation("CardMembers") // assigned to cards
+  boards     Board[]                @relation("UserBoards")
+  cards      Card[]                 @relation("CardMembers") 
   comments   Comment[]
   meetings   MeetingParticipant[]
 }
@@ -22,6 +22,7 @@ model User {
 model Board {
   id         String                 @id @default(cuid())
   title      String
+  description String
   ownerId    String
   owner      User                  @relation("UserBoards", fields: [ownerId], references: [id])
   lists      List[]
