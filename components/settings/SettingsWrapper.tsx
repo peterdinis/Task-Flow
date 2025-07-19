@@ -23,12 +23,14 @@ import {
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import DashboardSidebar from "../dashboard/DashboardSidebar";
+import { FC, unstable_ViewTransition as ViewTransition } from "react";
 
-const SettingsWrapper = () => {
+const SettingsWrapper: FC = () => {
   const { theme, setTheme } = useTheme();
 
   return (
-    <SidebarProvider>
+    <ViewTransition enter={"slide-in"}>
+       <SidebarProvider>
       <div className="flex min-h-screen w-full">
         <DashboardSidebar />
         <SidebarInset className="flex-1">
@@ -327,6 +329,7 @@ const SettingsWrapper = () => {
         </SidebarInset>
       </div>
     </SidebarProvider>
+    </ViewTransition>
   );
 };
 
