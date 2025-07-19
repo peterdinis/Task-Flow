@@ -10,7 +10,7 @@ import {
 	Users,
 } from "lucide-react";
 import Link from "next/link";
-import { type FC } from "react";
+import { useState, type FC, useMemo } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,9 +26,9 @@ import {
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useAuthenticatedProfile } from "@/hooks/auth/useAuthentificatedUser";
+import { useAllBoards } from "@/hooks/boards/useAllBoards";
 
 const DashboardSidebar: FC = () => {
-	const {user} = useAuthenticatedProfile()
 
 	const navigation = [
 		{ title: "Dashboard", url: "/dashboard", icon: Home },
@@ -38,18 +38,23 @@ const DashboardSidebar: FC = () => {
 		{ title: "Settings", url: "/settings", icon: Settings },
 	];
 
-	const recentProjects = [
-		{ id: 1, name: "Website Redesign", color: "bg-blue-500" },
-		{ id: 2, name: "Mobile App", color: "bg-green-500" },
-		{ id: 3, name: "Marketing Campaign", color: "bg-purple-500" },
-	];
-
 	const teamMembers = [
 		{ id: 1, name: "John Doe", initials: "JD" },
 		{ id: 2, name: "Jane Smith", initials: "JS" },
 		{ id: 3, name: "Mike Johnson", initials: "MJ" },
 		{ id: 4, name: "Sarah Wilson", initials: "SW" },
 	];
+
+	const currentPage = 1;
+	const pageSize = 3;
+	const { user } = useAuthenticatedProfile()
+	const { data} = useAllBoards({ page: currentPage, limit: pageSize, ownerId: user?.id! });
+
+	 const paginatedProjects = useMemo(() => {
+		return data?.data
+	  }, [data])
+
+	  console.log(paginatedProjects)
 
 	return (
 		<Sidebar className="border-r border-gray-200">
@@ -91,7 +96,7 @@ const DashboardSidebar: FC = () => {
 					</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
-							{recentProjects.map((project) => (
+							{paginatedProjects && paginatedProjects.map((project: any) => (
 								<SidebarMenuItem key={project.id}>
 									<SidebarMenuButton asChild>
 										<Link
@@ -99,9 +104,9 @@ const DashboardSidebar: FC = () => {
 											className="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-gray-100 transition-colors"
 										>
 											<div
-												className={`w-3 h-3 rounded-full ${project.color}`}
+												className={`w-3 h-3 rounded-full ${project.projectColor}`}
 											></div>
-											<span className="text-sm">{project.name}</span>
+											<span className="text-sm">{project.title}</span>
 										</Link>
 									</SidebarMenuButton>
 								</SidebarMenuItem>

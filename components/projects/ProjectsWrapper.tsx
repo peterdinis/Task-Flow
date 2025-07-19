@@ -1,6 +1,6 @@
 "use client"
 
-import { FC, Key, useState } from "react";
+import { FC, Key, useState, useMemo } from "react";
 import {
   SidebarProvider,
   SidebarInset,
@@ -61,8 +61,14 @@ const ProjectsWrapper: FC = () => {
   const pageSize = 3;
   const { user } = useAuthenticatedProfile()
   const { data, isLoading, isError } = useAllBoards({ page: currentPage, limit: pageSize, ownerId: user?.id! });
-  const paginatedProjects = data?.data ?? [];
-  const totalPages = data?.totalPages ?? 1;
+
+  const paginatedProjects = useMemo(() => {
+    return data?.data
+  }, [data])
+
+  const totalPages = useMemo(() => {
+    return data?.totalPages
+  }, [data])
 
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
