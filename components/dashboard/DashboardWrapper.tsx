@@ -11,7 +11,7 @@ import {
 	TrendingUp,
 	Users,
 } from "lucide-react";
-import { useState, type FC } from "react";
+import type { FC } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -198,96 +198,14 @@ const DashboardWrapper: FC = () => {
 					<header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b lg:px-6">
 						<SidebarTrigger className="-ml-1" />
 						<div className="flex-1" />
-						<Dialog open={open} onOpenChange={setOpen}>
-							<DialogTrigger asChild>
-								<Button size="sm" className="ml-auto">
-									<Plus className="h-4 w-4 mr-2" />
-									<span className="hidden sm:inline">New Project</span>
-								</Button>
-							</DialogTrigger>
-							<DialogContent>
-								<DialogHeader>
-									<DialogTitle>Create New Project</DialogTitle>
-								</DialogHeader>
-								<div className="grid gap-4 py-4">
-									<div className="grid gap-2">
-										<Label htmlFor="title">Title</Label>
-										<Input
-											id="title"
-											value={form.title}
-											onChange={(e) => setForm({ ...form, title: e.target.value })}
-										/>
-									</div>
-									<div className="grid gap-2">
-										<Label htmlFor="description">Description</Label>
-										<Textarea
-											id="description"
-											value={form.description}
-											onChange={(e) => setForm({ ...form, description: e.target.value })}
-										/>
-									</div>
-									<div className="grid gap-2">
-										<Label htmlFor="progress">Progress (%)</Label>
-										<Input
-											id="progress"
-											type="number"
-											min={0}
-											max={100}
-											value={form.progress}
-											onChange={(e) =>
-												setForm({ ...form, progress: Number(e.target.value) })
-											}
-										/>
-									</div>
-									<div className="grid gap-2">
-										<Label htmlFor="color">Project Color</Label>
-										<Input
-											id="color"
-											type="color"
-											value={form.projectColor}
-											onChange={(e) => setForm({ ...form, projectColor: e.target.value })}
-											className="h-10 w-16 p-0 border-none"
-										/>
-									</div>
-								</div>
-								<DialogFooter>
-									<DialogClose asChild>
-										<Button
-											onClick={async () => {
-												try {
-													if (!user?.id) {
-														toast.error("You must be logged in to create a project");
-														return;
-													}
-
-													await createBoard.mutateAsync({
-														...form,
-														ownerId: user.id,
-													});
-
-													setOpen(false);
-													setForm({ title: '', description: '', progress: 0, projectColor: '#aabbcc' });
-													toast.success("New project was created");
-												} catch (err) {
-													console.error(err);
-													toast.error(err instanceof Error ? err.message : 'Failed to create project');
-												}
-											}}
-											disabled={createBoard.isPending}
-										>
-											{createBoard.isPending ? (
-												<Loader2 className="animate-spin h-4 w-4 mr-2" />
-											) : (
-												'Create'
-											)}
-										</Button>
-									</DialogClose>
-								</DialogFooter>
-							</DialogContent>
-						</Dialog>
+						<Button size="sm" className="ml-auto">
+							<Plus className="h-4 w-4 mr-2" />
+							<span className="hidden sm:inline">New Project</span>
+						</Button>
 					</header>
 
 					<div className="flex-1 space-y-4 p-4 lg:p-6">
+						{/* Welcome Section */}
 						<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 							<div>
 								<h1 className="text-2xl sm:text-3xl font-bold text-foreground">
@@ -308,7 +226,8 @@ const DashboardWrapper: FC = () => {
 								</Button>
 							</div>
 						</div>
-						
+
+						{/* Stats Grid */}
 						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 							{stats.map((stat, index) => (
 								<Card key={index}>
@@ -331,149 +250,150 @@ const DashboardWrapper: FC = () => {
 							))}
 						</div>
 
-						<div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
-							{/* Recent Projects */}
-							<div className="lg:col-span-2">
-								<Card>
-									<CardHeader>
-										<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-											<CardTitle>Recent Projects</CardTitle>
-											<Button variant="outline" size="sm">
-												View All
-											</Button>
-										</div>
-									</CardHeader>
-									<CardContent className="space-y-4">
-										{recentProjects.map((project) => (
-											<div
-												key={project.id}
-												className="flex flex-col gap-3 p-4 rounded-lg border bg-card sm:flex-row sm:items-center"
-											>
-												<div className="flex-1 min-w-0">
-													<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-														<h4 className="font-medium truncate">
-															{project.name}
-														</h4>
-														<div className="flex items-center gap-2">
-															<Badge className={getStatusColor(project.status)}>
-																{project.status}
-															</Badge>
-															<Button variant="ghost" size="sm">
-																<MoreHorizontal className="h-4 w-4" />
-															</Button>
+							<div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+								{/* Recent Projects */}
+								<div className="lg:col-span-2">
+									<Card>
+										<CardHeader>
+											<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+												<CardTitle>Recent Projects</CardTitle>
+												<Button variant="outline" size="sm">
+													View All
+												</Button>
+											</div>
+										</CardHeader>
+										<CardContent className="space-y-4">
+											{recentProjects.map((project) => (
+												<div
+													key={project.id}
+													className="flex flex-col gap-3 p-4 rounded-lg border bg-card sm:flex-row sm:items-center"
+												>
+													<div className="flex-1 min-w-0">
+														<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+															<h4 className="font-medium truncate">
+																{project.name}
+															</h4>
+															<div className="flex items-center gap-2">
+																<Badge className={getStatusColor(project.status)}>
+																	{project.status}
+																</Badge>
+																<Button variant="ghost" size="sm">
+																	<MoreHorizontal className="h-4 w-4" />
+																</Button>
+															</div>
+														</div>
+														<div className="flex flex-col gap-2 mt-2 sm:flex-row sm:items-center sm:justify-between">
+															<div className="flex items-center gap-4 text-sm text-muted-foreground">
+																<span className="flex items-center gap-1">
+																	<Calendar className="h-3 w-3" />
+																	{project.dueDate}
+																</span>
+																<span className="flex items-center gap-1">
+																	<Users className="h-3 w-3" />
+																	{project.team} members
+																</span>
+															</div>
+															<div className="flex items-center gap-2 min-w-0 sm:min-w-[120px]">
+																<Progress
+																	value={project.progress}
+																	className="flex-1"
+																/>
+																<span className="text-sm font-medium whitespace-nowrap">
+																	{project.progress}%
+																</span>
+															</div>
 														</div>
 													</div>
-													<div className="flex flex-col gap-2 mt-2 sm:flex-row sm:items-center sm:justify-between">
-														<div className="flex items-center gap-4 text-sm text-muted-foreground">
-															<span className="flex items-center gap-1">
-																<Calendar className="h-3 w-3" />
-																{project.dueDate}
-															</span>
-															<span className="flex items-center gap-1">
-																<Users className="h-3 w-3" />
-																{project.team} members
-															</span>
-														</div>
-														<div className="flex items-center gap-2 min-w-0 sm:min-w-[120px]">
-															<Progress
-																value={project.progress}
-																className="flex-1"
-															/>
-															<span className="text-sm font-medium whitespace-nowrap">
-																{project.progress}%
-															</span>
-														</div>
+												</div>
+											))}
+										</CardContent>
+									</Card>
+								</div>
+
+								{/* Sidebar Content */}
+								<div className="space-y-4 lg:space-y-6">
+									{/* Upcoming Tasks */}
+									<Card>
+										<CardHeader>
+											<CardTitle className="text-lg">Upcoming Tasks</CardTitle>
+											<CardDescription>
+												Your tasks for the next few days
+											</CardDescription>
+										</CardHeader>
+										<CardContent className="space-y-3">
+											{upcomingTasks.map((task) => (
+												<div
+													key={task.id}
+													className="flex flex-col gap-2 p-3 rounded-lg bg-muted/50"
+												>
+													<div className="flex items-start justify-between gap-2">
+														<h5 className="font-medium text-sm leading-tight">
+															{task.title}
+														</h5>
+														<Badge
+															className={`${getPriorityColor(task.priority)} text-xs`}
+															variant="secondary"
+														>
+															{task.priority}
+														</Badge>
 													</div>
-												</div>
-											</div>
-										))}
-									</CardContent>
-								</Card>
-							</div>
-
-							{/* Sidebar Content */}
-							<div className="space-y-4 lg:space-y-6">
-								{/* Upcoming Tasks */}
-								<Card>
-									<CardHeader>
-										<CardTitle className="text-lg">Upcoming Tasks</CardTitle>
-										<CardDescription>
-											Your tasks for the next few days
-										</CardDescription>
-									</CardHeader>
-									<CardContent className="space-y-3">
-										{upcomingTasks.map((task) => (
-											<div
-												key={task.id}
-												className="flex flex-col gap-2 p-3 rounded-lg bg-muted/50"
-											>
-												<div className="flex items-start justify-between gap-2">
-													<h5 className="font-medium text-sm leading-tight">
-														{task.title}
-													</h5>
-													<Badge
-														className={`${getPriorityColor(task.priority)} text-xs`}
-														variant="secondary"
-													>
-														{task.priority}
-													</Badge>
-												</div>
-												<div className="flex flex-col gap-1 text-xs text-muted-foreground">
-													<span>{task.project}</span>
-													<span className="flex items-center gap-1">
-														<Clock className="h-3 w-3" />
-														{task.dueDate}
-													</span>
-												</div>
-											</div>
-										))}
-									</CardContent>
-								</Card>
-
-								{/* Team Activity */}
-								<Card>
-									<CardHeader>
-										<CardTitle className="text-lg">Team Activity</CardTitle>
-										<CardDescription>
-											Recent updates from your team
-										</CardDescription>
-									</CardHeader>
-									<CardContent className="space-y-3">
-										{teamActivity.map((activity, index) => (
-											<div key={index} className="flex items-start space-x-3">
-												<Avatar className="w-6 h-6 mt-1">
-													<AvatarFallback className="text-xs bg-gradient-to-br from-blue-500 to-purple-500 text-white">
-														{activity.user
-															.split(" ")
-															.map((n) => n[0])
-															.join("")}
-													</AvatarFallback>
-												</Avatar>
-												<div className="flex-1 min-w-0">
-													<div className="text-sm">
-														<span className="font-medium">{activity.user}</span>
-														<span className="text-muted-foreground">
-															{" "}
-															{activity.action} in{" "}
-														</span>
-														<span className="font-medium">
-															{activity.project}
+													<div className="flex flex-col gap-1 text-xs text-muted-foreground">
+														<span>{task.project}</span>
+														<span className="flex items-center gap-1">
+															<Clock className="h-3 w-3" />
+															{task.dueDate}
 														</span>
 													</div>
-													<div className="text-xs text-muted-foreground mt-1">
-														{activity.time}
+												</div>
+											))}
+										</CardContent>
+									</Card>
+
+									{/* Team Activity */}
+									<Card>
+										<CardHeader>
+											<CardTitle className="text-lg">Team Activity</CardTitle>
+											<CardDescription>
+												Recent updates from your team
+											</CardDescription>
+										</CardHeader>
+										<CardContent className="space-y-3">
+											{teamActivity.map((activity, index) => (
+												<div key={index} className="flex items-start space-x-3">
+													<Avatar className="w-6 h-6 mt-1">
+														<AvatarFallback className="text-xs bg-gradient-to-br from-blue-500 to-purple-500 text-white">
+															{activity.user
+																.split(" ")
+																.map((n) => n[0])
+																.join("")}
+														</AvatarFallback>
+													</Avatar>
+													<div className="flex-1 min-w-0">
+														<div className="text-sm">
+															<span className="font-medium">{activity.user}</span>
+															<span className="text-muted-foreground">
+																{" "}
+																{activity.action} in{" "}
+															</span>
+															<span className="font-medium">
+																{activity.project}
+															</span>
+														</div>
+														<div className="text-xs text-muted-foreground mt-1">
+															{activity.time}
+														</div>
 													</div>
 												</div>
-											</div>
-										))}
-									</CardContent>
-								</Card>
+											))}
+										</CardContent>
+									</Card>
+								</div>
 							</div>
 						</div>
-					</div>
-				</SidebarInset>
-			</div>
-		</SidebarProvider>
+					</SidebarInset>
+				</div>
+			</SidebarProvider>
+		</ViewTransition>
 	);
 };
 
