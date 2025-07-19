@@ -71,13 +71,32 @@ const ProjectsWrapper: FC = () => {
   const totalPages = data?.totalPages || 1;
 
   const [searchQuery, setSearchQuery] = useState("");
-  const filteredProjects = projects.filter((project: any) => {
-    const query = searchQuery.toLowerCase();
-    return (
-      project.title.toLowerCase().includes(query) ||
-      project.description.toLowerCase().includes(query)
-    );
-  });
+  const [sortBy, setSortBy] = useState<"name" | "status" | "progress" | "">("");
+
+  const sortProjects = (projects: any[]) => {
+    return [...projects].sort((a, b) => {
+      if (sortBy === "name") {
+        return a.title.localeCompare(b.title);
+      }
+      if (sortBy === "status") {
+        return (a.status ?? "").localeCompare(b.status ?? "");
+      }
+      if (sortBy === "progress") {
+        return b.progress - a.progress;
+      }
+      return 0;
+    });
+  };
+
+  const filteredProjects = sortProjects(
+    projects.filter((project: any) => {
+      const query = searchQuery.toLowerCase();
+      return (
+        project.title.toLowerCase().includes(query) ||
+        project.description.toLowerCase().includes(query)
+      );
+    })
+  );
 
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
@@ -261,10 +280,15 @@ const ProjectsWrapper: FC = () => {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                      <DropdownMenuItem>Name</DropdownMenuItem>
-                      <DropdownMenuItem>Due Date</DropdownMenuItem>
-                      <DropdownMenuItem>Status</DropdownMenuItem>
-                      <DropdownMenuItem>Progress</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setSortBy("name")}>
+                        Name
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setSortBy("status")}>
+                        Status
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setSortBy("progress")}>
+                        Progress
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
@@ -334,9 +358,9 @@ const ProjectsWrapper: FC = () => {
                               <span className="truncate">
                                 {project.createdAt
                                   ? format(
-                                    new Date(project.createdAt),
-                                    "dd.MM.yyyy"
-                                  )
+                                      new Date(project.createdAt),
+                                      "dd.MM.yyyy"
+                                    )
                                   : "N/A"}
                               </span>
                             </div>
