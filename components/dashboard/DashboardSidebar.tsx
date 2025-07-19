@@ -10,7 +10,7 @@ import {
 	Users,
 } from "lucide-react";
 import Link from "next/link";
-import { useState, type FC, useMemo } from "react";
+import { type FC, useMemo } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -91,7 +91,7 @@ const DashboardSidebar: FC = () => {
 				</SidebarGroup>
 
 				<SidebarGroup>
-					<SidebarGroupLabel className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+					<SidebarGroupLabel className="px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-100 uppercase tracking-wider">
 						Recent Projects
 					</SidebarGroupLabel>
 					<SidebarGroupContent>
@@ -112,16 +112,6 @@ const DashboardSidebar: FC = () => {
 								</SidebarMenuItem>
 							))}
 						</SidebarMenu>
-						<div className="px-3 mt-2">
-							<Button
-								variant="ghost"
-								size="sm"
-								className="w-full justify-start text-gray-600"
-							>
-								<Plus className="h-4 w-4 mr-2" />
-								New Project
-							</Button>
-						</div>
 					</SidebarGroupContent>
 				</SidebarGroup>
 
@@ -139,7 +129,7 @@ const DashboardSidebar: FC = () => {
 												{member.initials}
 											</AvatarFallback>
 										</Avatar>
-										<span className="text-sm text-gray-700">{member.name}</span>
+										<span className="text-sm text-gray-700 dark:text-gray-50">{member.name}</span>
 									</div>
 								</SidebarMenuItem>
 							))}

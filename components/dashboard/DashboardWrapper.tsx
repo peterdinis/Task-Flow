@@ -5,12 +5,13 @@ import {
 	Calendar,
 	CheckCircle,
 	Clock,
+	Loader2,
 	MoreHorizontal,
 	Plus,
 	TrendingUp,
 	Users,
 } from "lucide-react";
-import type { FC } from "react";
+import { useState, type FC } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,21 @@ import {
 	SidebarTrigger,
 } from "@/components/ui/sidebar";
 import DashboardSidebar from "./DashboardSidebar";
+import {
+	Dialog,
+	DialogTrigger,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogFooter,
+	DialogClose,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "../ui/input";
+import { toast } from "sonner"
+import { useCreateBoard } from "@/hooks/boards/useCreateNewBoard";
+import { useAuthenticatedProfile } from "@/hooks/auth/useAuthentificatedUser";
 
 const DashboardWrapper: FC = () => {
 	const recentProjects = [
@@ -162,6 +178,18 @@ const DashboardWrapper: FC = () => {
 		}
 	};
 
+	const [open, setOpen] = useState(false)
+
+	const [form, setForm] = useState({
+		title: '',
+		description: '',
+		progress: 0,
+		projectColor: '#aabbcc'
+	});
+
+	const createBoard = useCreateBoard();
+	const { user } = useAuthenticatedProfile()
+
 	return (
 		<SidebarProvider>
 			<div className="flex min-h-screen w-full">
@@ -170,10 +198,93 @@ const DashboardWrapper: FC = () => {
 					<header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b lg:px-6">
 						<SidebarTrigger className="-ml-1" />
 						<div className="flex-1" />
-						<Button size="sm" className="ml-auto">
-							<Plus className="h-4 w-4 mr-2" />
-							<span className="hidden sm:inline">New Project</span>
-						</Button>
+						<Dialog open={open} onOpenChange={setOpen}>
+							<DialogTrigger asChild>
+								<Button size="sm" className="ml-auto">
+									<Plus className="h-4 w-4 mr-2" />
+									<span className="hidden sm:inline">New Project</span>
+								</Button>
+							</DialogTrigger>
+							<DialogContent>
+								<DialogHeader>
+									<DialogTitle>Create New Project</DialogTitle>
+								</DialogHeader>
+								<div className="grid gap-4 py-4">
+									<div className="grid gap-2">
+										<Label htmlFor="title">Title</Label>
+										<Input
+											id="title"
+											value={form.title}
+											onChange={(e) => setForm({ ...form, title: e.target.value })}
+										/>
+									</div>
+									<div className="grid gap-2">
+										<Label htmlFor="description">Description</Label>
+										<Textarea
+											id="description"
+											value={form.description}
+											onChange={(e) => setForm({ ...form, description: e.target.value })}
+										/>
+									</div>
+									<div className="grid gap-2">
+										<Label htmlFor="progress">Progress (%)</Label>
+										<Input
+											id="progress"
+											type="number"
+											min={0}
+											max={100}
+											value={form.progress}
+											onChange={(e) =>
+												setForm({ ...form, progress: Number(e.target.value) })
+											}
+										/>
+									</div>
+									<div className="grid gap-2">
+										<Label htmlFor="color">Project Color</Label>
+										<Input
+											id="color"
+											type="color"
+											value={form.projectColor}
+											onChange={(e) => setForm({ ...form, projectColor: e.target.value })}
+											className="h-10 w-16 p-0 border-none"
+										/>
+									</div>
+								</div>
+								<DialogFooter>
+									<DialogClose asChild>
+										<Button
+											onClick={async () => {
+												try {
+													if (!user?.id) {
+														toast.error("You must be logged in to create a project");
+														return;
+													}
+
+													await createBoard.mutateAsync({
+														...form,
+														ownerId: user.id,
+													});
+
+													setOpen(false);
+													setForm({ title: '', description: '', progress: 0, projectColor: '#aabbcc' });
+													toast.success("New project was created");
+												} catch (err) {
+													console.error(err);
+													toast.error(err instanceof Error ? err.message : 'Failed to create project');
+												}
+											}}
+											disabled={createBoard.isPending}
+										>
+											{createBoard.isPending ? (
+												<Loader2 className="animate-spin h-4 w-4 mr-2" />
+											) : (
+												'Create'
+											)}
+										</Button>
+									</DialogClose>
+								</DialogFooter>
+							</DialogContent>
+						</Dialog>
 					</header>
 
 					<div className="flex-1 space-y-4 p-4 lg:p-6">
