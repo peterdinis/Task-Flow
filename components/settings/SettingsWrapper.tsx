@@ -46,14 +46,10 @@ const SettingsWrapper: FC = () => {
             </div>
 
             <Tabs defaultValue="profile" className="space-y-4">
-              <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
+              <TabsList className="grid w-full grid-cols-2 lg:grid-cols-3">
                 <TabsTrigger value="profile" className="flex items-center gap-2">
                   <User className="h-4 w-4" />
                   <span className="hidden sm:inline">Profile</span>
-                </TabsTrigger>
-                <TabsTrigger value="appearance" className="flex items-center gap-2">
-                  <Palette className="h-4 w-4" />
-                  <span className="hidden sm:inline">Appearance</span>
                 </TabsTrigger>
                 <TabsTrigger value="notifications" className="flex items-center gap-2">
                   <Bell className="h-4 w-4" />
@@ -126,72 +122,6 @@ const SettingsWrapper: FC = () => {
                       <Save className="h-4 w-4 mr-2" />
                       Save Changes
                     </Button>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              <TabsContent value="appearance" className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Theme</CardTitle>
-                    <CardDescription>Choose your preferred theme appearance</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <div 
-                        className={`cursor-pointer rounded-lg border-2 p-4 text-center transition-colors ${
-                          theme === 'light' ? 'border-primary' : 'border-muted'
-                        }`}
-                        onClick={() => setTheme('light')}
-                      >
-                        <Sun className="h-8 w-8 mx-auto mb-2" />
-                        <div className="font-medium">Light</div>
-                        <div className="text-xs text-muted-foreground">Light theme</div>
-                      </div>
-                      <div 
-                        className={`cursor-pointer rounded-lg border-2 p-4 text-center transition-colors ${
-                          theme === 'dark' ? 'border-primary' : 'border-muted'
-                        }`}
-                        onClick={() => setTheme('dark')}
-                      >
-                        <Moon className="h-8 w-8 mx-auto mb-2" />
-                        <div className="font-medium">Dark</div>
-                        <div className="text-xs text-muted-foreground">Dark theme</div>
-                      </div>
-                      <div 
-                        className={`cursor-pointer rounded-lg border-2 p-4 text-center transition-colors ${
-                          theme === 'system' ? 'border-primary' : 'border-muted'
-                        }`}
-                        onClick={() => setTheme('system')}
-                      >
-                        <Monitor className="h-8 w-8 mx-auto mb-2" />
-                        <div className="font-medium">System</div>
-                        <div className="text-xs text-muted-foreground">Auto theme</div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Display Preferences</CardTitle>
-                    <CardDescription>Customize your display settings</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div>
-                        <Label>Compact sidebar</Label>
-                        <p className="text-sm text-muted-foreground">Use a more compact sidebar layout</p>
-                      </div>
-                      <Switch />
-                    </div>
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div>
-                        <Label>Show animations</Label>
-                        <p className="text-sm text-muted-foreground">Enable interface animations</p>
-                      </div>
-                      <Switch defaultChecked />
-                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>
