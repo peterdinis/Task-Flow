@@ -123,7 +123,7 @@ const DashboardSidebar: FC = () => {
 						<SidebarMenu>
 							{teamMembers.map((member) => (
 								<SidebarMenuItem key={member.id}>
-									<div className="flex items-center space-x-3 px-3 py-2">
+									<div className="flex items-center space-x-3 px-3 py-2 cursor-pointer">
 										<Avatar className="w-6 h-6">
 											<AvatarFallback className="text-xs bg-gradient-to-br from-blue-500 to-purple-500 text-white">
 												{member.initials}

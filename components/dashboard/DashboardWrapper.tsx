@@ -288,7 +288,6 @@ const DashboardWrapper: FC = () => {
 					</header>
 
 					<div className="flex-1 space-y-4 p-4 lg:p-6">
-						{/* Welcome Section */}
 						<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 							<div>
 								<h1 className="text-2xl sm:text-3xl font-bold text-foreground">
@@ -309,8 +308,7 @@ const DashboardWrapper: FC = () => {
 								</Button>
 							</div>
 						</div>
-
-						{/* Stats Grid */}
+						
 						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 							{stats.map((stat, index) => (
 								<Card key={index}>
