@@ -10,7 +10,8 @@ export const useCreateBoard = () => {
       title: string
       description: string
       progress: number
-      ownerId: string
+      ownerId: string,
+      projectColor: string
     }) => {
       const res = await fetch('/api/boards', {
         method: 'POST',

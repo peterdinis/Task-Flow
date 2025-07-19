@@ -70,7 +70,8 @@ const ProjectsWrapper: FC = () => {
     title: '',
     description: '',
     progress: 0,
-    ownerId: user?.id
+    ownerId: user?.id,
+    projectColor: ""
   });
 
   const createBoard = useCreateBoard();
@@ -140,7 +141,7 @@ const ProjectsWrapper: FC = () => {
                         try {
                           await createBoard.mutateAsync(form);
                           setOpen(false);
-                          setForm({ title: '', description: '', progress: 0, ownerId: '1' });
+                          setForm({ title: '', description: '', progress: 0, ownerId: 0, projectColor: "" });
                           toast.success("New project was created")
                         } catch (err) {
                           console.error(err);
