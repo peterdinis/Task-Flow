@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useRouter } from "next/navigation"
 import {toast} from "sonner"
 import { useAuthenticatedProfile } from "@/hooks/auth/useAuthentificatedUser"
+import Link from "next/link"
 
 const ProfileDropdown: FC = () => {
   const router = useRouter()
@@ -30,13 +31,17 @@ const ProfileDropdown: FC = () => {
         <Avatar>
           <AvatarImage src="https://github.com/shadcn.png" />
           <AvatarFallback>
-            {user?.name?.[0] ?? user?.email?.[0] ?? "U"}
+            {user?.email}
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>
           {isLoading ? "Loading..." : user?.name || "My Account"}
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel>
+          <Link href="/dashboard">Dashboard</Link>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
