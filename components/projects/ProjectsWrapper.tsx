@@ -1,6 +1,6 @@
 "use client"
 
-import { FC, Key, useEffect, useState } from "react";
+import { FC, Key, useState } from "react";
 import {
   SidebarProvider,
   SidebarInset,
@@ -59,19 +59,17 @@ import { useAuthenticatedProfile } from "@/hooks/auth/useAuthentificatedUser";
 const ProjectsWrapper: FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 3;
-  const { data, isLoading, isError } = useAllBoards({ page: currentPage, limit: pageSize });
+  const { user } = useAuthenticatedProfile()
+  const { data, isLoading, isError } = useAllBoards({ page: currentPage, limit: pageSize, ownerId: user?.id! });
   const paginatedProjects = data?.data ?? [];
   const totalPages = data?.totalPages ?? 1;
-
-  const {user} = useAuthenticatedProfile()
 
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
     title: '',
     description: '',
     progress: 0,
-    ownerId: user?.id,
-    projectColor: ""
+    projectColor: '#aabbcc'
   });
 
   const createBoard = useCreateBoard();
@@ -133,19 +131,51 @@ const ProjectsWrapper: FC = () => {
                       onChange={(e) => setForm({ ...form, description: e.target.value })}
                     />
                   </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="progress">Progress (%)</Label>
+                    <Input
+                      id="progress"
+                      type="number"
+                      min={0}
+                      max={100}
+                      value={form.progress}
+                      onChange={(e) =>
+                        setForm({ ...form, progress: Number(e.target.value) })
+                      }
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="color">Project Color</Label>
+                    <Input
+                      id="color"
+                      type="color"
+                      value={form.projectColor}
+                      onChange={(e) => setForm({ ...form, projectColor: e.target.value })}
+                      className="h-10 w-16 p-0 border-none"
+                    />
+                  </div>
                 </div>
                 <DialogFooter>
                   <DialogClose asChild>
                     <Button
                       onClick={async () => {
                         try {
-                          await createBoard.mutateAsync(form);
+                          if (!user?.id) {
+                            toast.error("You must be logged in to create a project");
+                            return;
+                          }
+
+                          await createBoard.mutateAsync({
+                            ...form,
+                            ownerId: user.id,
+                          });
+
                           setOpen(false);
-                          setForm({ title: '', description: '', progress: 0, ownerId: 0, projectColor: "" });
-                          toast.success("New project was created")
+                          setForm({ title: '', description: '', progress: 0, projectColor: '#aabbcc' });
+                          toast.success("New project was created");
                         } catch (err) {
                           console.error(err);
-                          alert(err instanceof Error ? err.message : 'Failed to create project');
+                          toast.error(err instanceof Error ? err.message : 'Failed to create project');
                         }
                       }}
                       disabled={createBoard.isPending}
@@ -202,8 +232,8 @@ const ProjectsWrapper: FC = () => {
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center space-x-2 min-w-0">
-                        <div className={`w-3 h-3 rounded-full ${project.color} shrink-0`}></div>
-                        <CardTitle className="text-lg truncate">{project.name}</CardTitle>
+                        <div className={`w-3 h-3 rounded-full`} style={{ backgroundColor: project.projectColor }}></div>
+                        <CardTitle className="text-lg truncate">{project.title}</CardTitle>
                       </div>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -223,7 +253,7 @@ const ProjectsWrapper: FC = () => {
                   <CardContent>
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
-                        <Badge className={getStatusColor(project.status)}>{project.status}</Badge>
+                        <Badge className={getStatusColor("In Progress")}>In Progress</Badge>
                         <span className="text-sm font-medium">{project.progress}%</span>
                       </div>
                       <div className="w-full bg-secondary rounded-full h-2">
@@ -235,15 +265,15 @@ const ProjectsWrapper: FC = () => {
                       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between text-sm text-muted-foreground">
                         <div className="flex items-center">
                           <Calendar className="h-4 w-4 mr-1" />
-                          <span className="truncate">{project.dueDate}</span>
+                          <span className="truncate">{project.createdAt}</span>
                         </div>
                         <div className="flex items-center">
                           <Users className="h-4 w-4 mr-1" />
                           <div className="flex -space-x-1">
-                            {project.team.map((member: any, index: Key) => (
+                            {project.members?.map((member: any, index: Key) => (
                               <Avatar key={index} className="w-6 h-6 border-2 border-background">
                                 <AvatarFallback className="text-xs bg-gradient-to-br from-blue-500 to-purple-500 text-white">
-                                  {member}
+                                  {member.name?.[0] ?? "?"}
                                 </AvatarFallback>
                               </Avatar>
                             ))}

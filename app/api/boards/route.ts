@@ -14,6 +14,9 @@ export async function GET(req: NextRequest) {
       take: limit,
       include: { owner: true, members: true },
       orderBy: { createdAt: 'desc' },
+      where: {
+        ownerId: searchParams.get("ownerId")!
+      },
     }),
     db.board.count(),
   ])
