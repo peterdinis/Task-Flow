@@ -63,13 +63,9 @@ const ProjectsWrapper: FC = () => {
   const { user } = useAuthenticatedProfile()
   const { data, isLoading, isError } = useAllBoards({ page: currentPage, limit: pageSize, ownerId: user?.id! });
 
-  const paginatedProjects = useMemo(() => {
-    return data?.data
-  }, [data])
+  const paginatedProjects = data?.data || []
 
-  const totalPages = useMemo(() => {
-    return data?.totalPages
-  }, [data])
+  const totalPages = data?.totalPages || 1
 
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
