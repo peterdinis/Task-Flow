@@ -2,23 +2,14 @@
 
 import { CheckCircle } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState, type FC } from "react";
+import { type FC } from "react";
 import { Button } from "../ui/button";
 import ModeToggle from "./ModeToggle";
 import ProfileDropdown from "../auth/ProfileDropdown";
-import { useProfile } from "@/hooks/auth/useProfile";
+import { useAuthenticatedProfile } from "@/hooks/auth/useAuthentificatedUser";
 
 const Navigation: FC = () => {
-	const [token, setToken] = useState<string | null>(null)
-
-	useEffect(() => {
-		const storedToken = localStorage.getItem("token")
-		setToken(storedToken)
-	}, [])
-
-	const { data } = useProfile(token)
-
-	const user = data?.user
+	const { user } = useAuthenticatedProfile()
 
 	return (
 		<header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
@@ -32,26 +23,28 @@ const Navigation: FC = () => {
 							TaskFlow
 						</span>
 					</div>
-					<nav className="hidden md:flex space-x-8">
-						<a
-							href="#features"
-							className="text-muted-foreground hover:text-foreground transition-colors"
-						>
-							Features
-						</a>
-						<a
-							href="#testimonials"
-							className="text-muted-foreground hover:text-foreground transition-colors"
-						>
-							Testimonials
-						</a>
-						<a
-							href="#pricing"
-							className="text-muted-foreground hover:text-foreground transition-colors"
-						>
-							Pricing
-						</a>
-					</nav>
+					{!user && (
+						<nav className="hidden md:flex space-x-8">
+							<Link
+								href="#features"
+								className="text-muted-foreground hover:text-foreground transition-colors"
+							>
+								Features
+							</Link>
+							<Link
+								href="#testimonials"
+								className="text-muted-foreground hover:text-foreground transition-colors"
+							>
+								Testimonials
+							</Link>
+							<Link
+								href="#pricing"
+								className="text-muted-foreground hover:text-foreground transition-colors"
+							>
+								Pricing
+							</Link>
+						</nav>
+					)}
 					<div className="flex items-center space-x-4">
 						{!user && (
 							<>

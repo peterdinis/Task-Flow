@@ -53,8 +53,8 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useCreateBoard } from "@/hooks/boards/useCreateNewBoard";
-import { useProfile } from "@/hooks/auth/useProfile";
 import { toast } from "sonner"
+import { useAuthenticatedProfile } from "@/hooks/auth/useAuthentificatedUser";
 
 const ProjectsWrapper: FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -63,16 +63,7 @@ const ProjectsWrapper: FC = () => {
   const paginatedProjects = data?.data ?? [];
   const totalPages = data?.totalPages ?? 1;
 
-  const [token, setToken] = useState<string | null>(null)
-
-  useEffect(() => {
-    const storedToken = localStorage.getItem("token")
-    setToken(storedToken)
-  }, [])
-
-  const { data: userData } = useProfile(token)
-
-  const user = userData?.user
+  const {user} = useAuthenticatedProfile()
 
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({

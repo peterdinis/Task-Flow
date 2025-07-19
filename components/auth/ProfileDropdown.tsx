@@ -1,6 +1,6 @@
 "use client"
 
-import { FC, useEffect, useState } from "react"
+import { FC } from "react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,22 +10,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useProfile } from "@/hooks/auth/useProfile"
 import { useRouter } from "next/navigation"
 import {toast} from "sonner"
+import { useAuthenticatedProfile } from "@/hooks/auth/useAuthentificatedUser"
 
 const ProfileDropdown: FC = () => {
-  const [token, setToken] = useState<string | null>(null)
   const router = useRouter()
-
-  useEffect(() => {
-    const storedToken = localStorage.getItem("token")
-    setToken(storedToken)
-  }, [])
-
-  const { data, isLoading } = useProfile(token)
-
-  const user = data?.user
+  const {user, isLoading} = useAuthenticatedProfile()
 
   const handleLogout = () => {
     localStorage.removeItem("token")
