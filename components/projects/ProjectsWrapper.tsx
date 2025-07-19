@@ -55,6 +55,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useCreateBoard } from "@/hooks/boards/useCreateNewBoard";
 import { toast } from "sonner"
 import { useAuthenticatedProfile } from "@/hooks/auth/useAuthentificatedUser";
+import { format } from "date-fns";
 
 const ProjectsWrapper: FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -212,10 +213,6 @@ const ProjectsWrapper: FC = () => {
                 <Input placeholder="Search projects..." className="pl-9" />
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" size="sm">
-                  <Filter className="h-4 w-4 mr-2" />
-                  Filter
-                </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm">
@@ -271,7 +268,9 @@ const ProjectsWrapper: FC = () => {
                       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between text-sm text-muted-foreground">
                         <div className="flex items-center">
                           <Calendar className="h-4 w-4 mr-1" />
-                          <span className="truncate">{project.createdAt}</span>
+                          <span className="truncate">
+                            {project.createdAt ? format(new Date(project.createdAt), "dd.MM.yyyy") : "N/A"}
+                          </span>
                         </div>
                         <div className="flex items-center">
                           <Users className="h-4 w-4 mr-1" />
