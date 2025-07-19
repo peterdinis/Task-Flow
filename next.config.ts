@@ -4,6 +4,8 @@ const nextConfig: NextConfig = {
 	reactStrictMode: true,
 	experimental: {
 		viewTransition: true,
+		typedRoutes: true,
+		typedEnv: true
 	},
 };
 
