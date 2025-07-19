@@ -10,7 +10,7 @@ import {
 	Users,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState, type FC } from "react";
+import { type FC, useMemo } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,19 +25,10 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { useProfile } from "@/hooks/auth/useProfile";
+import { useAuthenticatedProfile } from "@/hooks/auth/useAuthentificatedUser";
+import { useAllBoards } from "@/hooks/boards/useAllBoards";
 
 const DashboardSidebar: FC = () => {
-	const [token, setToken] = useState<string | null>(null)
-
-	useEffect(() => {
-		const storedToken = localStorage.getItem("token")
-		setToken(storedToken)
-	}, [])
-
-	const { data } = useProfile(token)
-
-	const user = data?.user
 
 	const navigation = [
 		{ title: "Dashboard", url: "/dashboard", icon: Home },
@@ -47,18 +38,23 @@ const DashboardSidebar: FC = () => {
 		{ title: "Settings", url: "/settings", icon: Settings },
 	];
 
-	const recentProjects = [
-		{ id: 1, name: "Website Redesign", color: "bg-blue-500" },
-		{ id: 2, name: "Mobile App", color: "bg-green-500" },
-		{ id: 3, name: "Marketing Campaign", color: "bg-purple-500" },
-	];
-
 	const teamMembers = [
 		{ id: 1, name: "John Doe", initials: "JD" },
 		{ id: 2, name: "Jane Smith", initials: "JS" },
 		{ id: 3, name: "Mike Johnson", initials: "MJ" },
 		{ id: 4, name: "Sarah Wilson", initials: "SW" },
 	];
+
+	const currentPage = 1;
+	const pageSize = 3;
+	const { user } = useAuthenticatedProfile()
+	const { data} = useAllBoards({ page: currentPage, limit: pageSize, ownerId: user?.id! });
+
+	 const paginatedProjects = useMemo(() => {
+		return data?.data
+	  }, [data])
+
+	  console.log(paginatedProjects)
 
 	return (
 		<Sidebar className="border-r border-gray-200">
@@ -95,12 +91,12 @@ const DashboardSidebar: FC = () => {
 				</SidebarGroup>
 
 				<SidebarGroup>
-					<SidebarGroupLabel className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+					<SidebarGroupLabel className="px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-100 uppercase tracking-wider">
 						Recent Projects
 					</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
-							{recentProjects.map((project) => (
+							{paginatedProjects && paginatedProjects.map((project: any) => (
 								<SidebarMenuItem key={project.id}>
 									<SidebarMenuButton asChild>
 										<Link
@@ -108,24 +104,14 @@ const DashboardSidebar: FC = () => {
 											className="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-gray-100 transition-colors"
 										>
 											<div
-												className={`w-3 h-3 rounded-full ${project.color}`}
+												className={`w-3 h-3 rounded-full ${project.projectColor}`}
 											></div>
-											<span className="text-sm">{project.name}</span>
+											<span className="text-sm">{project.title}</span>
 										</Link>
 									</SidebarMenuButton>
 								</SidebarMenuItem>
 							))}
 						</SidebarMenu>
-						<div className="px-3 mt-2">
-							<Button
-								variant="ghost"
-								size="sm"
-								className="w-full justify-start text-gray-600"
-							>
-								<Plus className="h-4 w-4 mr-2" />
-								New Project
-							</Button>
-						</div>
 					</SidebarGroupContent>
 				</SidebarGroup>
 
@@ -137,13 +123,13 @@ const DashboardSidebar: FC = () => {
 						<SidebarMenu>
 							{teamMembers.map((member) => (
 								<SidebarMenuItem key={member.id}>
-									<div className="flex items-center space-x-3 px-3 py-2">
+									<div className="flex items-center space-x-3 px-3 py-2 cursor-pointer">
 										<Avatar className="w-6 h-6">
 											<AvatarFallback className="text-xs bg-gradient-to-br from-blue-500 to-purple-500 text-white">
 												{member.initials}
 											</AvatarFallback>
 										</Avatar>
-										<span className="text-sm text-gray-700">{member.name}</span>
+										<span className="text-sm text-gray-700 dark:text-gray-50">{member.name}</span>
 									</div>
 								</SidebarMenuItem>
 							))}

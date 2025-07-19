@@ -1,16 +1,17 @@
 "use client";
 
 import {
-	AlertTriangle,
 	Calendar,
-	CheckCircle,
-	Clock,
+	Users,
+	Loader2,
 	MoreHorizontal,
 	Plus,
 	TrendingUp,
-	Users,
+	CheckCircle,
+	Clock,
+	AlertTriangle,
 } from "lucide-react";
-import { type FC, unstable_ViewTransition as ViewTransition } from "react";
+import { useState, type FC } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -28,113 +29,110 @@ import {
 	SidebarTrigger,
 } from "@/components/ui/sidebar";
 import DashboardSidebar from "./DashboardSidebar";
+import {
+	Dialog,
+	DialogTrigger,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogFooter,
+	DialogClose,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { useCreateBoard } from "@/hooks/boards/useCreateNewBoard";
+import { useAuthenticatedProfile } from "@/hooks/auth/useAuthentificatedUser";
 
 const DashboardWrapper: FC = () => {
+	const { user } = useAuthenticatedProfile();
+	const createBoard = useCreateBoard();
+
 	const recentProjects = [
 		{
-			id: 1,
-			name: "Website Redesign",
-			progress: 75,
-			dueDate: "2024-02-15",
-			status: "In Progress",
-			team: 4,
-		},
-		{
-			id: 2,
-			name: "Mobile App",
+			id: "1",
+			title: "Landing Page Redesign",
+			description: "Redesign the marketing landing page for better conversion.",
 			progress: 45,
-			dueDate: "2024-03-20",
-			status: "Planning",
-			team: 3,
+			status: "In Progress",
+			color: "#3B82F6",
 		},
 		{
-			id: 3,
-			name: "Marketing Campaign",
-			progress: 90,
-			dueDate: "2024-01-30",
-			status: "Review",
-			team: 6,
+			id: "2",
+			title: "Mobile App Planning",
+			description: "Start defining features and UI flows for mobile MVP.",
+			progress: 10,
+			status: "Planning",
+			color: "#A855F7",
 		},
 	];
 
 	const upcomingTasks = [
 		{
-			id: 1,
-			title: "Design mockups review",
-			project: "Website Redesign",
-			dueDate: "Today",
+			id: "1",
+			title: "Fix navbar responsiveness",
+			dueDate: "2025-07-22",
 			priority: "High",
 		},
 		{
-			id: 2,
-			title: "Client presentation",
-			project: "Mobile App",
-			dueDate: "Tomorrow",
+			id: "2",
+			title: "Write blog post about AI assistant",
+			dueDate: "2025-07-25",
 			priority: "Medium",
-		},
-		{
-			id: 3,
-			title: "Content creation",
-			project: "Marketing Campaign",
-			dueDate: "Jan 25",
-			priority: "Low",
-		},
-		{
-			id: 4,
-			title: "Database migration",
-			project: "Backend Update",
-			dueDate: "Jan 27",
-			priority: "High",
 		},
 	];
 
 	const teamActivity = [
-		{
-			user: "John Doe",
-			action: "completed task",
-			project: "Website Redesign",
-			time: "2 hours ago",
-		},
-		{
-			user: "Jane Smith",
-			action: "added comment",
-			project: "Mobile App",
-			time: "4 hours ago",
-		},
-		{
-			user: "Mike Johnson",
-			action: "updated status",
-			project: "Marketing Campaign",
-			time: "6 hours ago",
-		},
+		{ id: "1", name: "Anna", action: "commented on task", time: "2h ago" },
+		{ id: "2", name: "John", action: "completed task", time: "1d ago" },
 	];
 
 	const stats = [
 		{
-			title: "Active Projects",
-			value: "12",
-			change: "+2",
-			icon: <TrendingUp className="h-4 w-4" />,
+			id: "1",
+			label: "Completed Tasks",
+			value: "128",
+			icon: CheckCircle,
 		},
 		{
-			title: "Tasks Completed",
-			value: "48",
-			change: "+8",
-			icon: <CheckCircle className="h-4 w-4" />,
+			id: "2",
+			label: "Active Projects",
+			value: "4",
+			icon: TrendingUp,
 		},
 		{
-			title: "Team Members",
-			value: "16",
-			change: "+3",
-			icon: <Users className="h-4 w-4" />,
+			id: "3",
+			label: "Upcoming Deadlines",
+			value: "3",
+			icon: Clock,
 		},
 		{
-			title: "Pending Reviews",
-			value: "6",
-			change: "-2",
-			icon: <AlertTriangle className="h-4 w-4" />,
+			id: "4",
+			label: "Overdue Tasks",
+			value: "2",
+			icon: AlertTriangle,
 		},
 	];
+
+	const [open, setOpen] = useState(false);
+	const [form, setForm] = useState({
+		title: "",
+		description: "",
+		progress: 0,
+		projectColor: "#aabbcc",
+	});
+
+	const getStatusColor = (status: string) => {
+		switch (status) {
+			case "In Progress":
+				return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+			case "Planning":
+				return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300";
+			default:
+				return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
+		}
+	};
 
 	const getPriorityColor = (priority: string) => {
 		switch (priority) {
@@ -149,224 +147,171 @@ const DashboardWrapper: FC = () => {
 		}
 	};
 
-	const getStatusColor = (status: string) => {
-		switch (status) {
-			case "In Progress":
-				return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
-			case "Planning":
-				return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300";
-			case "Review":
-				return "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300";
-			default:
-				return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
-		}
-	};
-
 	return (
-		<ViewTransition enter={"slide-in"}>
-			<SidebarProvider>
-				<div className="flex min-h-screen w-full">
-					<DashboardSidebar />
-					<SidebarInset className="flex-1">
-						<header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b lg:px-6">
-							<SidebarTrigger className="-ml-1" />
-							<div className="flex-1" />
-							<Button size="sm" className="ml-auto">
-								<Plus className="h-4 w-4 mr-2" />
-								<span className="hidden sm:inline">New Project</span>
-							</Button>
-						</header>
-
-						<div className="flex-1 space-y-4 p-4 lg:p-6">
-							{/* Welcome Section */}
-							<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-								<div>
-									<h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-										Welcome back!
-									</h1>
-									<p className="text-muted-foreground">
-										Here's what's happening with your projects today.
-									</p>
+		<SidebarProvider>
+			<div className="flex min-h-screen w-full">
+				<DashboardSidebar />
+				<SidebarInset className="flex-1">
+					<header className="flex h-16 items-center gap-2 px-4 border-b lg:px-6">
+						<SidebarTrigger className="-ml-1" />
+						<div className="flex-1" />
+						<Dialog open={open} onOpenChange={setOpen}>
+							<DialogTrigger asChild>
+								<Button size="sm">
+									<Plus className="h-4 w-4 mr-2" />
+									New Project
+								</Button>
+							</DialogTrigger>
+							<DialogContent>
+								<DialogHeader>
+									<DialogTitle>Create New Project</DialogTitle>
+								</DialogHeader>
+								<div className="grid gap-4 py-4">
+									<div className="grid gap-2">
+										<Label htmlFor="title">Title</Label>
+										<Input
+											id="title"
+											value={form.title}
+											onChange={(e) =>
+												setForm({ ...form, title: e.target.value })
+											}
+										/>
+									</div>
+									<div className="grid gap-2">
+										<Label htmlFor="description">Description</Label>
+										<Textarea
+											id="description"
+											value={form.description}
+											onChange={(e) =>
+												setForm({ ...form, description: e.target.value })
+											}
+										/>
+									</div>
+									<div className="grid gap-2">
+										<Label htmlFor="progress">Progress</Label>
+										<Input
+											id="progress"
+											type="number"
+											value={form.progress}
+											onChange={(e) =>
+												setForm({ ...form, progress: +e.target.value })
+											}
+										/>
+									</div>
+									<div className="grid gap-2">
+										<Label htmlFor="color">Color</Label>
+										<Input
+											id="color"
+											type="color"
+											value={form.projectColor}
+											onChange={(e) =>
+												setForm({ ...form, projectColor: e.target.value })
+											}
+										/>
+									</div>
 								</div>
-								<div className="flex flex-col sm:flex-row gap-2">
-									<Button variant="outline" size="sm">
-										<Calendar className="h-4 w-4 mr-2" />
-										<span className="hidden sm:inline">Schedule</span>
-									</Button>
-									<Button variant="outline" size="sm">
-										<Users className="h-4 w-4 mr-2" />
-										<span className="hidden sm:inline">Team</span>
-									</Button>
-								</div>
-							</div>
+								<DialogFooter>
+									<DialogClose asChild>
+										<Button
+											onClick={async () => {
+												try {
+													if (!user?.id) {
+														toast.error("You must be logged in.");
+														return;
+													}
+													await createBoard.mutateAsync({
+														...form,
+														ownerId: user.id,
+													});
+													setForm({
+														title: "",
+														description: "",
+														progress: 0,
+														projectColor: "#aabbcc",
+													});
+													setOpen(false);
+													toast.success("Project created");
+												} catch (err) {
+													toast.error("Failed to create project");
+												}
+											}}
+											disabled={createBoard.isPending}
+										>
+											{createBoard.isPending ? (
+												<Loader2 className="animate-spin h-4 w-4 mr-2" />
+											) : (
+												"Create"
+											)}
+										</Button>
+									</DialogClose>
+								</DialogFooter>
+							</DialogContent>
+						</Dialog>
+					</header>
 
-							{/* Stats Grid */}
-							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-								{stats.map((stat, index) => (
-									<Card key={index}>
-										<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-											<CardTitle className="text-sm font-medium">
-												{stat.title}
+					<div className="p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+						{stats.map((s) => (
+							<Card key={s.id}>
+								<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+									<CardTitle className="text-sm font-medium">
+										{s.label}
+									</CardTitle>
+									<s.icon className="h-4 w-4 text-muted-foreground" />
+								</CardHeader>
+								<CardContent>
+									<div className="text-2xl font-bold">{s.value}</div>
+								</CardContent>
+							</Card>
+						))}
+					</div>
+
+					<div className="p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+						{recentProjects.map((project) => (
+							<Card key={project.id}>
+								<CardHeader>
+									<div className="flex items-center justify-between">
+										<div className="flex items-center gap-2">
+											<div
+												className="w-3 h-3 rounded-full"
+												style={{ backgroundColor: project.color }}
+											/>
+											<CardTitle className="text-base">
+												{project.title}
 											</CardTitle>
-											{stat.icon}
-										</CardHeader>
-										<CardContent>
-											<div className="text-xl sm:text-2xl font-bold">
-												{stat.value}
-											</div>
-											<p className="text-xs text-muted-foreground">
-												<span className="text-green-600">{stat.change}</span> from
-												last month
-											</p>
-										</CardContent>
-									</Card>
-								))}
-							</div>
-
-							<div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
-								{/* Recent Projects */}
-								<div className="lg:col-span-2">
-									<Card>
-										<CardHeader>
-											<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-												<CardTitle>Recent Projects</CardTitle>
-												<Button variant="outline" size="sm">
-													View All
-												</Button>
-											</div>
-										</CardHeader>
-										<CardContent className="space-y-4">
-											{recentProjects.map((project) => (
-												<div
-													key={project.id}
-													className="flex flex-col gap-3 p-4 rounded-lg border bg-card sm:flex-row sm:items-center"
-												>
-													<div className="flex-1 min-w-0">
-														<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-															<h4 className="font-medium truncate">
-																{project.name}
-															</h4>
-															<div className="flex items-center gap-2">
-																<Badge className={getStatusColor(project.status)}>
-																	{project.status}
-																</Badge>
-																<Button variant="ghost" size="sm">
-																	<MoreHorizontal className="h-4 w-4" />
-																</Button>
-															</div>
-														</div>
-														<div className="flex flex-col gap-2 mt-2 sm:flex-row sm:items-center sm:justify-between">
-															<div className="flex items-center gap-4 text-sm text-muted-foreground">
-																<span className="flex items-center gap-1">
-																	<Calendar className="h-3 w-3" />
-																	{project.dueDate}
-																</span>
-																<span className="flex items-center gap-1">
-																	<Users className="h-3 w-3" />
-																	{project.team} members
-																</span>
-															</div>
-															<div className="flex items-center gap-2 min-w-0 sm:min-w-[120px]">
-																<Progress
-																	value={project.progress}
-																	className="flex-1"
-																/>
-																<span className="text-sm font-medium whitespace-nowrap">
-																	{project.progress}%
-																</span>
-															</div>
-														</div>
-													</div>
-												</div>
-											))}
-										</CardContent>
-									</Card>
-								</div>
-
-								{/* Sidebar Content */}
-								<div className="space-y-4 lg:space-y-6">
-									{/* Upcoming Tasks */}
-									<Card>
-										<CardHeader>
-											<CardTitle className="text-lg">Upcoming Tasks</CardTitle>
-											<CardDescription>
-												Your tasks for the next few days
-											</CardDescription>
-										</CardHeader>
-										<CardContent className="space-y-3">
-											{upcomingTasks.map((task) => (
-												<div
-													key={task.id}
-													className="flex flex-col gap-2 p-3 rounded-lg bg-muted/50"
-												>
-													<div className="flex items-start justify-between gap-2">
-														<h5 className="font-medium text-sm leading-tight">
-															{task.title}
-														</h5>
-														<Badge
-															className={`${getPriorityColor(task.priority)} text-xs`}
-															variant="secondary"
-														>
-															{task.priority}
-														</Badge>
-													</div>
-													<div className="flex flex-col gap-1 text-xs text-muted-foreground">
-														<span>{task.project}</span>
-														<span className="flex items-center gap-1">
-															<Clock className="h-3 w-3" />
-															{task.dueDate}
-														</span>
-													</div>
-												</div>
-											))}
-										</CardContent>
-									</Card>
-
-									{/* Team Activity */}
-									<Card>
-										<CardHeader>
-											<CardTitle className="text-lg">Team Activity</CardTitle>
-											<CardDescription>
-												Recent updates from your team
-											</CardDescription>
-										</CardHeader>
-										<CardContent className="space-y-3">
-											{teamActivity.map((activity, index) => (
-												<div key={index} className="flex items-start space-x-3">
-													<Avatar className="w-6 h-6 mt-1">
-														<AvatarFallback className="text-xs bg-gradient-to-br from-blue-500 to-purple-500 text-white">
-															{activity.user
-																.split(" ")
-																.map((n) => n[0])
-																.join("")}
-														</AvatarFallback>
-													</Avatar>
-													<div className="flex-1 min-w-0">
-														<div className="text-sm">
-															<span className="font-medium">{activity.user}</span>
-															<span className="text-muted-foreground">
-																{" "}
-																{activity.action} in{" "}
-															</span>
-															<span className="font-medium">
-																{activity.project}
-															</span>
-														</div>
-														<div className="text-xs text-muted-foreground mt-1">
-															{activity.time}
-														</div>
-													</div>
-												</div>
-											))}
-										</CardContent>
-									</Card>
-								</div>
-							</div>
-						</div>
-					</SidebarInset>
-				</div>
-			</SidebarProvider>
-		</ViewTransition>
+										</div>
+										<Button variant="ghost" size="icon">
+											<MoreHorizontal className="h-4 w-4" />
+										</Button>
+									</div>
+									<CardDescription>{project.description}</CardDescription>
+								</CardHeader>
+								<CardContent className="space-y-4">
+									<div className="flex items-center justify-between text-sm">
+										<Badge className={getStatusColor(project.status)}>
+											{project.status}
+										</Badge>
+										<span>{project.progress}%</span>
+									</div>
+									<Progress value={project.progress} />
+									<div className="flex items-center justify-between text-sm text-muted-foreground">
+										<div className="flex items-center gap-1">
+											<Calendar className="h-4 w-4" />
+											<span>Jul 10, 2025</span>
+										</div>
+										<div className="flex items-center gap-1">
+											<Users className="h-4 w-4" />
+											<Avatar className="w-6 h-6">
+												<AvatarFallback className="text-xs">A</AvatarFallback>
+											</Avatar>
+										</div>
+									</div>
+								</CardContent>
+							</Card>
+						))}
+					</div>
+				</SidebarInset>
+			</div>
+		</SidebarProvider>
 	);
 };
 
