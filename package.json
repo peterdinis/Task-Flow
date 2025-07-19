@@ -7,7 +7,8 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
-		"format": "pnpm exec biome check --write ."
+		"format": "pnpm exec biome check --write .",
+		"seed": "tsx prisma/seeder.ts"
 	},
 	"dependencies": {
 		"@dnd-kit/core": "^6.3.1",
