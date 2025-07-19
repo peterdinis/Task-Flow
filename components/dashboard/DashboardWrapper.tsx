@@ -10,7 +10,7 @@ import {
 	TrendingUp,
 	Users,
 } from "lucide-react";
-import type { FC } from "react";
+import { type FC, unstable_ViewTransition as ViewTransition } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -163,208 +163,210 @@ const DashboardWrapper: FC = () => {
 	};
 
 	return (
-		<SidebarProvider>
-			<div className="flex min-h-screen w-full">
-				<DashboardSidebar />
-				<SidebarInset className="flex-1">
-					<header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b lg:px-6">
-						<SidebarTrigger className="-ml-1" />
-						<div className="flex-1" />
-						<Button size="sm" className="ml-auto">
-							<Plus className="h-4 w-4 mr-2" />
-							<span className="hidden sm:inline">New Project</span>
-						</Button>
-					</header>
+		<ViewTransition enter={"slide-in"}>
+			<SidebarProvider>
+				<div className="flex min-h-screen w-full">
+					<DashboardSidebar />
+					<SidebarInset className="flex-1">
+						<header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b lg:px-6">
+							<SidebarTrigger className="-ml-1" />
+							<div className="flex-1" />
+							<Button size="sm" className="ml-auto">
+								<Plus className="h-4 w-4 mr-2" />
+								<span className="hidden sm:inline">New Project</span>
+							</Button>
+						</header>
 
-					<div className="flex-1 space-y-4 p-4 lg:p-6">
-						{/* Welcome Section */}
-						<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-							<div>
-								<h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-									Welcome back!
-								</h1>
-								<p className="text-muted-foreground">
-									Here's what's happening with your projects today.
-								</p>
+						<div className="flex-1 space-y-4 p-4 lg:p-6">
+							{/* Welcome Section */}
+							<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+								<div>
+									<h1 className="text-2xl sm:text-3xl font-bold text-foreground">
+										Welcome back!
+									</h1>
+									<p className="text-muted-foreground">
+										Here's what's happening with your projects today.
+									</p>
+								</div>
+								<div className="flex flex-col sm:flex-row gap-2">
+									<Button variant="outline" size="sm">
+										<Calendar className="h-4 w-4 mr-2" />
+										<span className="hidden sm:inline">Schedule</span>
+									</Button>
+									<Button variant="outline" size="sm">
+										<Users className="h-4 w-4 mr-2" />
+										<span className="hidden sm:inline">Team</span>
+									</Button>
+								</div>
 							</div>
-							<div className="flex flex-col sm:flex-row gap-2">
-								<Button variant="outline" size="sm">
-									<Calendar className="h-4 w-4 mr-2" />
-									<span className="hidden sm:inline">Schedule</span>
-								</Button>
-								<Button variant="outline" size="sm">
-									<Users className="h-4 w-4 mr-2" />
-									<span className="hidden sm:inline">Team</span>
-								</Button>
+
+							{/* Stats Grid */}
+							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+								{stats.map((stat, index) => (
+									<Card key={index}>
+										<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+											<CardTitle className="text-sm font-medium">
+												{stat.title}
+											</CardTitle>
+											{stat.icon}
+										</CardHeader>
+										<CardContent>
+											<div className="text-xl sm:text-2xl font-bold">
+												{stat.value}
+											</div>
+											<p className="text-xs text-muted-foreground">
+												<span className="text-green-600">{stat.change}</span> from
+												last month
+											</p>
+										</CardContent>
+									</Card>
+								))}
 							</div>
-						</div>
 
-						{/* Stats Grid */}
-						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-							{stats.map((stat, index) => (
-								<Card key={index}>
-									<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-										<CardTitle className="text-sm font-medium">
-											{stat.title}
-										</CardTitle>
-										{stat.icon}
-									</CardHeader>
-									<CardContent>
-										<div className="text-xl sm:text-2xl font-bold">
-											{stat.value}
-										</div>
-										<p className="text-xs text-muted-foreground">
-											<span className="text-green-600">{stat.change}</span> from
-											last month
-										</p>
-									</CardContent>
-								</Card>
-							))}
-						</div>
-
-						<div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
-							{/* Recent Projects */}
-							<div className="lg:col-span-2">
-								<Card>
-									<CardHeader>
-										<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-											<CardTitle>Recent Projects</CardTitle>
-											<Button variant="outline" size="sm">
-												View All
-											</Button>
-										</div>
-									</CardHeader>
-									<CardContent className="space-y-4">
-										{recentProjects.map((project) => (
-											<div
-												key={project.id}
-												className="flex flex-col gap-3 p-4 rounded-lg border bg-card sm:flex-row sm:items-center"
-											>
-												<div className="flex-1 min-w-0">
-													<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-														<h4 className="font-medium truncate">
-															{project.name}
-														</h4>
-														<div className="flex items-center gap-2">
-															<Badge className={getStatusColor(project.status)}>
-																{project.status}
-															</Badge>
-															<Button variant="ghost" size="sm">
-																<MoreHorizontal className="h-4 w-4" />
-															</Button>
+							<div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+								{/* Recent Projects */}
+								<div className="lg:col-span-2">
+									<Card>
+										<CardHeader>
+											<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+												<CardTitle>Recent Projects</CardTitle>
+												<Button variant="outline" size="sm">
+													View All
+												</Button>
+											</div>
+										</CardHeader>
+										<CardContent className="space-y-4">
+											{recentProjects.map((project) => (
+												<div
+													key={project.id}
+													className="flex flex-col gap-3 p-4 rounded-lg border bg-card sm:flex-row sm:items-center"
+												>
+													<div className="flex-1 min-w-0">
+														<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+															<h4 className="font-medium truncate">
+																{project.name}
+															</h4>
+															<div className="flex items-center gap-2">
+																<Badge className={getStatusColor(project.status)}>
+																	{project.status}
+																</Badge>
+																<Button variant="ghost" size="sm">
+																	<MoreHorizontal className="h-4 w-4" />
+																</Button>
+															</div>
+														</div>
+														<div className="flex flex-col gap-2 mt-2 sm:flex-row sm:items-center sm:justify-between">
+															<div className="flex items-center gap-4 text-sm text-muted-foreground">
+																<span className="flex items-center gap-1">
+																	<Calendar className="h-3 w-3" />
+																	{project.dueDate}
+																</span>
+																<span className="flex items-center gap-1">
+																	<Users className="h-3 w-3" />
+																	{project.team} members
+																</span>
+															</div>
+															<div className="flex items-center gap-2 min-w-0 sm:min-w-[120px]">
+																<Progress
+																	value={project.progress}
+																	className="flex-1"
+																/>
+																<span className="text-sm font-medium whitespace-nowrap">
+																	{project.progress}%
+																</span>
+															</div>
 														</div>
 													</div>
-													<div className="flex flex-col gap-2 mt-2 sm:flex-row sm:items-center sm:justify-between">
-														<div className="flex items-center gap-4 text-sm text-muted-foreground">
-															<span className="flex items-center gap-1">
-																<Calendar className="h-3 w-3" />
-																{project.dueDate}
-															</span>
-															<span className="flex items-center gap-1">
-																<Users className="h-3 w-3" />
-																{project.team} members
-															</span>
-														</div>
-														<div className="flex items-center gap-2 min-w-0 sm:min-w-[120px]">
-															<Progress
-																value={project.progress}
-																className="flex-1"
-															/>
-															<span className="text-sm font-medium whitespace-nowrap">
-																{project.progress}%
-															</span>
-														</div>
+												</div>
+											))}
+										</CardContent>
+									</Card>
+								</div>
+
+								{/* Sidebar Content */}
+								<div className="space-y-4 lg:space-y-6">
+									{/* Upcoming Tasks */}
+									<Card>
+										<CardHeader>
+											<CardTitle className="text-lg">Upcoming Tasks</CardTitle>
+											<CardDescription>
+												Your tasks for the next few days
+											</CardDescription>
+										</CardHeader>
+										<CardContent className="space-y-3">
+											{upcomingTasks.map((task) => (
+												<div
+													key={task.id}
+													className="flex flex-col gap-2 p-3 rounded-lg bg-muted/50"
+												>
+													<div className="flex items-start justify-between gap-2">
+														<h5 className="font-medium text-sm leading-tight">
+															{task.title}
+														</h5>
+														<Badge
+															className={`${getPriorityColor(task.priority)} text-xs`}
+															variant="secondary"
+														>
+															{task.priority}
+														</Badge>
 													</div>
-												</div>
-											</div>
-										))}
-									</CardContent>
-								</Card>
-							</div>
-
-							{/* Sidebar Content */}
-							<div className="space-y-4 lg:space-y-6">
-								{/* Upcoming Tasks */}
-								<Card>
-									<CardHeader>
-										<CardTitle className="text-lg">Upcoming Tasks</CardTitle>
-										<CardDescription>
-											Your tasks for the next few days
-										</CardDescription>
-									</CardHeader>
-									<CardContent className="space-y-3">
-										{upcomingTasks.map((task) => (
-											<div
-												key={task.id}
-												className="flex flex-col gap-2 p-3 rounded-lg bg-muted/50"
-											>
-												<div className="flex items-start justify-between gap-2">
-													<h5 className="font-medium text-sm leading-tight">
-														{task.title}
-													</h5>
-													<Badge
-														className={`${getPriorityColor(task.priority)} text-xs`}
-														variant="secondary"
-													>
-														{task.priority}
-													</Badge>
-												</div>
-												<div className="flex flex-col gap-1 text-xs text-muted-foreground">
-													<span>{task.project}</span>
-													<span className="flex items-center gap-1">
-														<Clock className="h-3 w-3" />
-														{task.dueDate}
-													</span>
-												</div>
-											</div>
-										))}
-									</CardContent>
-								</Card>
-
-								{/* Team Activity */}
-								<Card>
-									<CardHeader>
-										<CardTitle className="text-lg">Team Activity</CardTitle>
-										<CardDescription>
-											Recent updates from your team
-										</CardDescription>
-									</CardHeader>
-									<CardContent className="space-y-3">
-										{teamActivity.map((activity, index) => (
-											<div key={index} className="flex items-start space-x-3">
-												<Avatar className="w-6 h-6 mt-1">
-													<AvatarFallback className="text-xs bg-gradient-to-br from-blue-500 to-purple-500 text-white">
-														{activity.user
-															.split(" ")
-															.map((n) => n[0])
-															.join("")}
-													</AvatarFallback>
-												</Avatar>
-												<div className="flex-1 min-w-0">
-													<div className="text-sm">
-														<span className="font-medium">{activity.user}</span>
-														<span className="text-muted-foreground">
-															{" "}
-															{activity.action} in{" "}
-														</span>
-														<span className="font-medium">
-															{activity.project}
+													<div className="flex flex-col gap-1 text-xs text-muted-foreground">
+														<span>{task.project}</span>
+														<span className="flex items-center gap-1">
+															<Clock className="h-3 w-3" />
+															{task.dueDate}
 														</span>
 													</div>
-													<div className="text-xs text-muted-foreground mt-1">
-														{activity.time}
+												</div>
+											))}
+										</CardContent>
+									</Card>
+
+									{/* Team Activity */}
+									<Card>
+										<CardHeader>
+											<CardTitle className="text-lg">Team Activity</CardTitle>
+											<CardDescription>
+												Recent updates from your team
+											</CardDescription>
+										</CardHeader>
+										<CardContent className="space-y-3">
+											{teamActivity.map((activity, index) => (
+												<div key={index} className="flex items-start space-x-3">
+													<Avatar className="w-6 h-6 mt-1">
+														<AvatarFallback className="text-xs bg-gradient-to-br from-blue-500 to-purple-500 text-white">
+															{activity.user
+																.split(" ")
+																.map((n) => n[0])
+																.join("")}
+														</AvatarFallback>
+													</Avatar>
+													<div className="flex-1 min-w-0">
+														<div className="text-sm">
+															<span className="font-medium">{activity.user}</span>
+															<span className="text-muted-foreground">
+																{" "}
+																{activity.action} in{" "}
+															</span>
+															<span className="font-medium">
+																{activity.project}
+															</span>
+														</div>
+														<div className="text-xs text-muted-foreground mt-1">
+															{activity.time}
+														</div>
 													</div>
 												</div>
-											</div>
-										))}
-									</CardContent>
-								</Card>
+											))}
+										</CardContent>
+									</Card>
+								</div>
 							</div>
 						</div>
-					</div>
-				</SidebarInset>
-			</div>
-		</SidebarProvider>
+					</SidebarInset>
+				</div>
+			</SidebarProvider>
+		</ViewTransition>
 	);
 };
 

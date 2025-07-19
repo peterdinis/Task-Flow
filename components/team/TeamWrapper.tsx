@@ -1,4 +1,6 @@
-import { FC } from "react";
+"use client"
+
+import { FC, unstable_ViewTransition as ViewTransition } from "react";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import DashboardSidebar from "../dashboard/DashboardSidebar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -128,7 +130,8 @@ const TeamWrapper: FC = () => {
     };
 
     return (
-        <SidebarProvider>
+        <ViewTransition enter={"slide-in"}>
+            <SidebarProvider>
             <div className="flex min-h-screen w-full">
                 <DashboardSidebar />
                 <SidebarInset className="flex-1">
@@ -300,6 +303,7 @@ const TeamWrapper: FC = () => {
                 </SidebarInset>
             </div>
         </SidebarProvider>
+        </ViewTransition>
     )
 }
 
