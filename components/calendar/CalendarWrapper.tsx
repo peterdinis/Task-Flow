@@ -1,6 +1,6 @@
 "use client"
 
-import { type FC, useState } from "react";
+import { type FC, useState, unstable_ViewTransition as ViewTransition } from "react";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import DashboardSidebar from "../dashboard/DashboardSidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -49,7 +49,8 @@ const CalendarWrapper: FC = () => {
     };
 
     return (
-        <SidebarProvider>
+        <ViewTransition enter="slide-in">
+            <SidebarProvider>
             <div className="flex min-h-screen w-full">
                 <DashboardSidebar />
                 <SidebarInset className="flex-1">
@@ -144,6 +145,7 @@ const CalendarWrapper: FC = () => {
                 </SidebarInset>
             </div>
         </SidebarProvider>
+        </ViewTransition>
     )
 }
 
