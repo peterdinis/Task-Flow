@@ -14,8 +14,9 @@ import {
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { FC } from "react";
 
-export function AppSidebar() {
+export const DashboardSidebar: FC = () => {
   const navigation = [
     { title: "Dashboard", url: "/dashboard", icon: Home },
     { title: "Projects", url: "/projects", icon: FolderOpen },
