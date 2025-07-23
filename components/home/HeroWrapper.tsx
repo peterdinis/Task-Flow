@@ -6,6 +6,9 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Stats from "./Stats";
 import Features from "./Features";
+import TestimonialsSection from "./TestimonialsSection";
+import CTA from "./CTA";
+import Footer from "../shared/Footer";
 
 const HeroWrapper: FC = () => {
     return (
@@ -40,6 +43,9 @@ const HeroWrapper: FC = () => {
             </section>
             <Stats />
             <Features />
+            <TestimonialsSection />
+            <CTA />
+            <Footer />
         </div>
     )
 }
