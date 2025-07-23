@@ -4,6 +4,7 @@ import './globals.css';
 import { ScrollToTopButton } from '@/components/shared/ScrollToTop';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import AppClerkProvider from '@/components/providers/ClerkProvider';
+import { Toaster } from '@/components/ui/toaster';
 
 const geistSans = Ubuntu({
     weight: '700',
@@ -32,6 +33,7 @@ export default function RootLayout({
                     <AppClerkProvider>
                         {children}
                         <ScrollToTopButton />
+                        <Toaster />
                     </AppClerkProvider>
                 </ThemeProvider>
             </body>
