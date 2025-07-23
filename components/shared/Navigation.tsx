@@ -2,6 +2,7 @@ import { FC } from "react";
 import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { ModeToggle } from "./ModeToggle";
 
 const Navigation: FC = () => {
     return (
@@ -26,6 +27,7 @@ const Navigation: FC = () => {
                         <Link href="/dashboard">
                             <Button>Get Started</Button>
                         </Link>
+                        <ModeToggle />
                     </div>
                 </div>
             </div>
