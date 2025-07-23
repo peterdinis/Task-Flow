@@ -1,8 +1,8 @@
-import ProjectsWrapper from "@/components/projects/ProjectsWrapper";
-import { NextPage } from "next";
+import ProjectsWrapper from '@/components/projects/ProjectsWrapper';
+import { NextPage } from 'next';
 
 const ProjectsPage: NextPage = () => {
-    return <ProjectsWrapper />
-}
+    return <ProjectsWrapper />;
+};
 
 export default ProjectsPage;

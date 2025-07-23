@@ -43,7 +43,7 @@ const Navigation: FC = () => {
                             variant='ghost'
                             className='hidden sm:inline-flex'
                         >
-                            <Link href="/sign-up">Create account</Link>
+                            <Link href='/sign-up'>Create account</Link>
                         </Button>
                         <Link href='/sign-in'>
                             <Button>Get Started</Button>

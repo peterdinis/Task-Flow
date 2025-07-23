@@ -1,8 +1,8 @@
-import TeamWrapper from "@/components/team/TeamWrapper";
-import { NextPage } from "next";
+import TeamWrapper from '@/components/team/TeamWrapper';
+import { NextPage } from 'next';
 
 const TeamPage: NextPage = () => {
-    return <TeamWrapper />
-}
+    return <TeamWrapper />;
+};
 
 export default TeamPage;
