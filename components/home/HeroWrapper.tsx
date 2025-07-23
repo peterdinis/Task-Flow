@@ -25,7 +25,7 @@ const HeroWrapper: FC = () => {
                             </span>
                         </h1>
                         <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed">
-                            Streamline your workflow, collaborate with your team, and deliver projects on time with TaskFlow's intuitive project management platform.
+                            Streamline your workflow, collaborate with your team, and deliver projects on time with TaskFlow&rsquo;s intuitive project management platform.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                             <Link href="/dashboard">

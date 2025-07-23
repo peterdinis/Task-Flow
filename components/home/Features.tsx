@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Calendar, BarChart3, Zap, Shield, Globe, ArrowRight, Star, Quote } from "lucide-react";
+import { Users, Calendar, BarChart3, Zap, Shield, Globe} from "lucide-react";
 
 const Features: FC = () => {
     const features = [

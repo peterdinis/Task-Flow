@@ -1,6 +1,6 @@
 import { FC } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Calendar, BarChart3, Zap, Shield, Globe, ArrowRight, Star, Quote } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Quote, Star } from "lucide-react";
 
 const TestimonialsSection: FC = () => {
     const testimonials = [
@@ -49,7 +49,7 @@ const TestimonialsSection: FC = () => {
                                 </div>
                                 <Quote className="h-6 w-6 text-muted-foreground mb-4" />
                                 <p className="text-muted-foreground mb-4 leading-relaxed">
-                                    "{testimonial.content}"
+                                    &ldquo;{testimonial.content}&rdquo;
                                 </p>
                                 <div>
                                     <div className="font-semibold text-foreground">{testimonial.name}</div>
@@ -63,7 +63,7 @@ const TestimonialsSection: FC = () => {
                 </div>
             </div>
         </section>
-    )
-}
+    );
+};
 
 export default TestimonialsSection;
