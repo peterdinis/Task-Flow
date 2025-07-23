@@ -3,6 +3,7 @@ import { CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ModeToggle } from './ModeToggle';
+import ProfileDropdown from '../auth/ProfileDropdown';
 
 const Navigation: FC = () => {
     return (
@@ -48,6 +49,7 @@ const Navigation: FC = () => {
                             <Button>Get Started</Button>
                         </Link>
                         <ModeToggle />
+                        <ProfileDropdown />
                     </div>
                 </div>
             </div>
