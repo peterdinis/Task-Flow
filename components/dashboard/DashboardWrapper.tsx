@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Plus, Calendar, Users, TrendingUp, Clock, AlertTriangle, CheckCircle, MoreHorizontal } from "lucide-react";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { FC } from "react";
+import { ModeToggle } from "../shared/ModeToggle";
 
 const DashboardWrapper: FC = () => {
   const recentProjects = [
@@ -65,6 +66,7 @@ const DashboardWrapper: FC = () => {
               <Plus className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">New Project</span>
             </Button>
+            <ModeToggle />
           </header>
 
           <div className="flex-1 space-y-4 p-4 lg:p-6">
