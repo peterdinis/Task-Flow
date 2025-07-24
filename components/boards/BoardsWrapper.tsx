@@ -46,17 +46,20 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createNewBoard } from '@/actions/boardActions';
 import { toast } from 'sonner';
+import { useUser } from '@clerk/nextjs';
 
 const formSchema = z.object({
     title: z.string().min(1, 'Title is required'),
     description: z.string().optional(),
     color: z.string().optional(),
+    user_id: z.string() // Assuming user_id is optional here, adjust as needed
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 const BoardsWrapper: FC = () => {
     const [open, setOpen] = useState(false);
+    const {user} = useUser()
 
     const {
         register,
@@ -69,6 +72,7 @@ const BoardsWrapper: FC = () => {
             title: '',
             description: '',
             color: '#3b82f6',
+            user_id: user?.id!
         },
     });
 
