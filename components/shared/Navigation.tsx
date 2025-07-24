@@ -1,11 +1,15 @@
+'use client';
+
 import { FC } from 'react';
 import { CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ModeToggle } from './ModeToggle';
 import ProfileDropdown from '../auth/ProfileDropdown';
+import { useUser } from '@clerk/nextjs';
 
 const Navigation: FC = () => {
+    const { user } = useUser();
     return (
         <header className='bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 border-b backdrop-blur'>
             <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
@@ -49,7 +53,7 @@ const Navigation: FC = () => {
                             <Button>Get Started</Button>
                         </Link>
                         <ModeToggle />
-                        <ProfileDropdown />
+                        {user && <ProfileDropdown />}
                     </div>
                 </div>
             </div>
