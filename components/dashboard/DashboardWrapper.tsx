@@ -56,6 +56,38 @@ const DashboardWrapper: FC = () => {
             status: 'Review',
             team: 6,
         },
+        {
+            id: 4,
+            name: 'Marketing Campaign',
+            progress: 90,
+            dueDate: '2024-01-30',
+            status: 'Review',
+            team: 6,
+        },
+        {
+            id: 5,
+            name: 'Marketing Campaign',
+            progress: 90,
+            dueDate: '2024-01-30',
+            status: 'Review',
+            team: 6,
+        },
+        {
+            id: 6,
+            name: 'Marketing Campaign',
+            progress: 90,
+            dueDate: '2024-01-30',
+            status: 'Review',
+            team: 6,
+        },
+        {
+            id: 7,
+            name: 'Marketing Campaign',
+            progress: 90,
+            dueDate: '2024-01-30',
+            status: 'Review',
+            team: 6,
+        },
     ];
 
     const upcomingTasks = [
