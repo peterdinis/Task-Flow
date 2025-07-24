@@ -5,7 +5,6 @@ import { createNewBoardSchema, getBoardsSchema } from '@/schemas/boardSchema';
 import { createClient } from '@/supabase/client';
 import { auth } from '@clerk/nextjs/server';
 
-
 export const createNewBoard = actionClient
     .inputSchema(createNewBoardSchema)
     .action(async ({ parsedInput }) => {
