@@ -196,7 +196,7 @@ const ProfileDropdown: FC = () => {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem>
-                    <Link href="/dashboard">Dashboard</Link>
+                    <Link href='/dashboard'>Dashboard</Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />
