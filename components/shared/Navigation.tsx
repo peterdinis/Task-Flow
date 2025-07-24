@@ -22,28 +22,32 @@ const Navigation: FC = () => {
                             TaskFlow
                         </span>
                     </div>
-                    <nav className='hidden space-x-8 md:flex'>
-                        <Link
-                            href='#features'
-                            className='text-muted-foreground hover:text-foreground transition-colors'
-                        >
-                            Features
-                        </Link>
-                        <Link
-                            href='#testimonials'
-                            className='text-muted-foreground hover:text-foreground transition-colors'
-                        >
-                            Testimonials
-                        </Link>
-                        <Link
-                            href='#pricing'
-                            className='text-muted-foreground hover:text-foreground transition-colors'
-                        >
-                            Pricing
-                        </Link>
-                    </nav>
+                    {!user && (
+                        <nav className='hidden space-x-8 md:flex'>
+                            <Link
+                                href='#features'
+                                className='text-muted-foreground hover:text-foreground transition-colors'
+                            >
+                                Features
+                            </Link>
+                            <Link
+                                href='#testimonials'
+                                className='text-muted-foreground hover:text-foreground transition-colors'
+                            >
+                                Testimonials
+                            </Link>
+                            <Link
+                                href='#pricing'
+                                className='text-muted-foreground hover:text-foreground transition-colors'
+                            >
+                                Pricing
+                            </Link>
+                        </nav>
+                    )}
                     <div className='flex items-center space-x-4'>
-                        <Button
+                        {!user && (
+                            <>
+                            <Button
                             variant='ghost'
                             className='hidden sm:inline-flex'
                         >
@@ -52,6 +56,8 @@ const Navigation: FC = () => {
                         <Link href='/sign-in'>
                             <Button>Get Started</Button>
                         </Link>
+                            </>
+                        )}
                         <ModeToggle />
                         {user && <ProfileDropdown />}
                     </div>
