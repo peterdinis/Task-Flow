@@ -3,7 +3,7 @@
 import { useClerk, useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React, { useState, useEffect, useRef, ReactNode, FC } from 'react';
+import { useState, useEffect, useRef, ReactNode, FC } from 'react';
 
 const User = (props: React.SVGProps<SVGSVGElement>) => (
     <svg
@@ -20,62 +20,6 @@ const User = (props: React.SVGProps<SVGSVGElement>) => (
     >
         <path d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2' />
         <circle cx='12' cy='7' r='4' />
-    </svg>
-);
-
-const Settings = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg
-        xmlns='http://www.w3.org/2000/svg'
-        width='16'
-        height='16'
-        viewBox='0 0 24 24'
-        fill='none'
-        stroke='currentColor'
-        strokeWidth='2'
-        strokeLinecap='round'
-        strokeLinejoin='round'
-        {...props}
-    >
-        <circle cx='12' cy='12' r='3' />
-        <path d='M12 1v6m0 6v6' />
-        <path d='M1 12h6m6 0h6' />
-    </svg>
-);
-
-const CreditCard = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg
-        xmlns='http://www.w3.org/2000/svg'
-        width='16'
-        height='16'
-        viewBox='0 0 24 24'
-        fill='none'
-        stroke='currentColor'
-        strokeWidth='2'
-        strokeLinecap='round'
-        strokeLinejoin='round'
-        {...props}
-    >
-        <rect width='20' height='14' x='2' y='5' rx='2' />
-        <line x1='2' x2='22' y1='10' y2='10' />
-    </svg>
-);
-
-const HelpCircle = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg
-        xmlns='http://www.w3.org/2000/svg'
-        width='16'
-        height='16'
-        viewBox='0 0 24 24'
-        fill='none'
-        stroke='currentColor'
-        strokeWidth='2'
-        strokeLinecap='round'
-        strokeLinejoin='round'
-        {...props}
-    >
-        <circle cx='12' cy='12' r='10' />
-        <path d='M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3' />
-        <line x1='12' x2='12.01' y1='17' y2='17' />
     </svg>
 );
 
