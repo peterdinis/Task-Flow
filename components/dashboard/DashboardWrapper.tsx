@@ -92,13 +92,13 @@ const DashboardWrapper: FC = () => {
     const teamActivity = [
         {
             user: 'John Doe',
-            action: "completed task",
+            action: 'completed task',
             project: 'Website Redesign',
             time: '2 hours ago',
         },
         {
             user: 'Jane Smith',
-            action: "added comment",
+            action: 'added comment',
             project: 'Mobile App',
             time: '4 hours ago',
         },
@@ -188,8 +188,8 @@ const DashboardWrapper: FC = () => {
                                     Welcome back!
                                 </h1>
                                 <p className='text-muted-foreground'>
-                                    Here&apos;s what&apos;s happening with your projects
-                                    today.
+                                    Here&apos;s what&apos;s happening with your
+                                    projects today.
                                 </p>
                             </div>
                             <div className='flex flex-col gap-2 sm:flex-row'>
@@ -378,7 +378,8 @@ const DashboardWrapper: FC = () => {
                                                         {activity.user}
                                                     </span>{' '}
                                                     <span className='text-muted-foreground'>
-                                                        {activity.action} in{' '}
+                                                        {activity.action}{' '}
+                                                        in{' '}
                                                     </span>
                                                     <span className='font-medium'>
                                                         {activity.project}
