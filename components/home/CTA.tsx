@@ -12,7 +12,7 @@ const CTA: FC = () => {
                     </h2>
                     <p className='text-muted-foreground mb-6 text-lg sm:mb-8 sm:text-xl'>
                         Join thousands of teams already using TaskFlow to
-                        deliver better projects faster.
+                        deliver better boards faster.
                     </p>
                     <div className='flex flex-col justify-center gap-4 sm:flex-row'>
                         <Link href='/dashboard'>

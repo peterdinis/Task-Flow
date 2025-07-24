@@ -32,7 +32,7 @@ import {
 import { Input } from '@/components/ui/input';
 
 const BoardsWrapper: FC = () => {
-    const projects = [
+    const boards = [
         {
             id: 1,
             name: 'Website Redesign',
@@ -132,10 +132,10 @@ const BoardsWrapper: FC = () => {
                         <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
                             <div>
                                 <h1 className='text-foreground text-2xl font-bold sm:text-3xl'>
-                                    Projects
+                                    Boards
                                 </h1>
                                 <p className='text-muted-foreground'>
-                                    Manage and track all your projects
+                                    Manage and track all your boards
                                 </p>
                             </div>
                         </div>
@@ -145,7 +145,7 @@ const BoardsWrapper: FC = () => {
                             <div className='relative max-w-sm flex-1'>
                                 <Search className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform' />
                                 <Input
-                                    placeholder='Search projects...'
+                                    placeholder='Search for board...'
                                     className='pl-9'
                                 />
                             </div>
@@ -179,7 +179,7 @@ const BoardsWrapper: FC = () => {
                         </div>
 
                         <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6 xl:grid-cols-3'>
-                            {projects.map((project) => (
+                            {boards.map((project) => (
                                 <Card
                                     key={project.id}
                                     className='cursor-pointer transition-shadow hover:shadow-lg'

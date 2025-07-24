@@ -38,13 +38,13 @@ const Features: FC = () => {
             icon: <Shield className='h-6 w-6' />,
             title: 'Secure & Private',
             description:
-                'Enterprise-grade security to keep your projects and data safe.',
+                'Enterprise-grade security to keep your boards and data safe.',
         },
         {
             icon: <Globe className='h-6 w-6' />,
             title: 'Global Access',
             description:
-                'Access your projects from anywhere with cloud synchronization.',
+                'Access your boards from anywhere with cloud synchronization.',
         },
     ];
 
@@ -53,7 +53,7 @@ const Features: FC = () => {
             <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
                 <div className='mb-12 text-center sm:mb-16'>
                     <h2 className='text-foreground mb-4 text-2xl font-bold sm:text-3xl lg:text-4xl'>
-                        Everything you need to manage projects
+                        Everything you need to manage boards
                     </h2>
                     <p className='text-muted-foreground mx-auto max-w-2xl text-lg sm:text-xl'>
                         Powerful features designed to help teams collaborate
