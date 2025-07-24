@@ -3,7 +3,7 @@ import { FC } from 'react';
 const Stats: FC = () => {
     const stats = [
         { number: '50K+', label: 'Active Users' },
-        { number: '100K+', label: 'Projects Created' },
+        { number: '100K+', label: 'Boards Created' },
         { number: '99.9%', label: 'Uptime' },
         { number: '24/7', label: 'Support' },
     ];

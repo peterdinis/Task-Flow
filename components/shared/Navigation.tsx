@@ -47,15 +47,15 @@ const Navigation: FC = () => {
                     <div className='flex items-center space-x-4'>
                         {!user && (
                             <>
-                            <Button
-                            variant='ghost'
-                            className='hidden sm:inline-flex'
-                        >
-                            <Link href='/sign-up'>Create account</Link>
-                        </Button>
-                        <Link href='/sign-in'>
-                            <Button>Get Started</Button>
-                        </Link>
+                                <Button
+                                    variant='ghost'
+                                    className='hidden sm:inline-flex'
+                                >
+                                    <Link href='/sign-up'>Create account</Link>
+                                </Button>
+                                <Link href='/sign-in'>
+                                    <Button>Get Started</Button>
+                                </Link>
                             </>
                         )}
                         <ModeToggle />

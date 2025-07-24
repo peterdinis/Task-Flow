@@ -110,7 +110,7 @@ const DashboardWrapper: FC = () => {
 
     const stats = [
         {
-            title: 'Active Projects',
+            title: 'Active Boards',
             value: '12',
             change: '+2',
             icon: <TrendingUp className='h-4 w-4' />,
@@ -237,9 +237,7 @@ const DashboardWrapper: FC = () => {
                                 <Card>
                                     <CardHeader>
                                         <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
-                                            <CardTitle>
-                                                Recent Projects
-                                            </CardTitle>
+                                            <CardTitle>Recent Boards</CardTitle>
                                             <Button variant='outline' size='sm'>
                                                 View All
                                             </Button>

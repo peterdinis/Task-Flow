@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import {
     Calendar,
@@ -28,12 +28,12 @@ import { FC } from 'react';
 import { useClerk, useUser } from '@clerk/nextjs';
 
 export const DashboardSidebar: FC = () => {
-    const {user} = useUser();
-    const {signOut} = useClerk()
+    const { user } = useUser();
+    const { signOut } = useClerk();
 
     const navigation = [
         { title: 'Dashboard', url: '/dashboard', icon: Home },
-        { title: 'Projects', url: '/projects', icon: FolderOpen },
+        { title: 'Boards', url: '/boards', icon: FolderOpen },
         { title: 'Calendar', url: '/calendar', icon: Calendar },
         { title: 'Team', url: '/team', icon: Users },
         { title: 'Settings', url: '/settings', icon: Settings },
@@ -88,7 +88,7 @@ export const DashboardSidebar: FC = () => {
 
                 <SidebarGroup>
                     <SidebarGroupLabel className='px-3 py-2 text-xs font-semibold tracking-wider text-gray-500 uppercase'>
-                        Recent Projects
+                        Recent Boards
                     </SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
@@ -159,9 +159,13 @@ export const DashboardSidebar: FC = () => {
                         <div className='text-sm font-medium'>
                             {user?.fullName}
                         </div>
-                        <Button variant={"link"} size={"sm"} onClick={() => {
-                            signOut()
-                        }}>
+                        <Button
+                            variant={'link'}
+                            size={'sm'}
+                            onClick={() => {
+                                signOut();
+                            }}
+                        >
                             Logout
                         </Button>
                     </div>

@@ -28,7 +28,7 @@ const HeroWrapper: FC = () => {
                         </h1>
                         <p className='text-muted-foreground mx-auto mb-6 max-w-2xl text-lg leading-relaxed sm:mb-8 sm:text-xl'>
                             Streamline your workflow, collaborate with your
-                            team, and deliver projects on time with
+                            team, and deliver boards on time with
                             TaskFlow&rsquo;s intuitive project management
                             platform.
                         </p>
