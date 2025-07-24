@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import { FC } from 'react';
 import {
@@ -45,7 +45,7 @@ import { AvatarImage } from '@radix-ui/react-avatar';
 
 const SettingsWrapper: FC = () => {
     const { theme, setTheme } = useTheme();
-    const {user} = useUser()
+    const { user } = useUser();
 
     return (
         <SidebarProvider>
@@ -116,7 +116,9 @@ const SettingsWrapper: FC = () => {
                                                     <AvatarFallback className='bg-gradient-to-br from-blue-600 to-purple-600 text-xl text-white'>
                                                         <User className='h-8 w-8' />
                                                     </AvatarFallback>
-                                                    <AvatarImage src={user?.imageUrl} />
+                                                    <AvatarImage
+                                                        src={user?.imageUrl}
+                                                    />
                                                 </Avatar>
                                                 <Button
                                                     size='sm'
@@ -134,7 +136,9 @@ const SettingsWrapper: FC = () => {
                                                         </Label>
                                                         <Input
                                                             id='firstName'
-                                                            defaultValue={user?.firstName!}
+                                                            defaultValue={
+                                                                user?.firstName!
+                                                            }
                                                             disabled={true}
                                                         />
                                                     </div>
@@ -144,7 +148,9 @@ const SettingsWrapper: FC = () => {
                                                         </Label>
                                                         <Input
                                                             id='lastName'
-                                                            defaultValue={user?.lastName!}
+                                                            defaultValue={
+                                                                user?.lastName!
+                                                            }
                                                             disabled={true}
                                                         />
                                                     </div>
@@ -156,7 +162,11 @@ const SettingsWrapper: FC = () => {
                                                     <Input
                                                         id='email'
                                                         type='email'
-                                                        defaultValue={user?.emailAddresses[0].emailAddress!}
+                                                        defaultValue={
+                                                            user
+                                                                ?.emailAddresses[0]
+                                                                .emailAddress!
+                                                        }
                                                         disabled={true}
                                                     />
                                                 </div>
