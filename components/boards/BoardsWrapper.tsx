@@ -31,7 +31,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 
-const ProjectsWrapper: FC = () => {
+const BoardsWrapper: FC = () => {
     const projects = [
         {
             id: 1,
@@ -282,4 +282,4 @@ const ProjectsWrapper: FC = () => {
     );
 };
 
-export default ProjectsWrapper;
+export default BoardsWrapper;
