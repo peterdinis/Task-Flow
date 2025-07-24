@@ -40,9 +40,13 @@ import {
     Sun,
     Monitor,
 } from 'lucide-react';
+import { useUser } from '@clerk/nextjs';
+import { AvatarImage } from '@radix-ui/react-avatar';
 
 const SettingsWrapper: FC = () => {
     const { theme, setTheme } = useTheme();
+    const {user} = useUser()
+
     return (
         <SidebarProvider>
             <div className='flex min-h-screen w-full'>
@@ -121,6 +125,7 @@ const SettingsWrapper: FC = () => {
                                                     <AvatarFallback className='bg-gradient-to-br from-blue-600 to-purple-600 text-xl text-white'>
                                                         <User className='h-8 w-8' />
                                                     </AvatarFallback>
+                                                    <AvatarImage src={user?.imageUrl} />
                                                 </Avatar>
                                                 <Button
                                                     size='sm'
@@ -138,7 +143,8 @@ const SettingsWrapper: FC = () => {
                                                         </Label>
                                                         <Input
                                                             id='firstName'
-                                                            defaultValue='John'
+                                                            defaultValue={user?.firstName!}
+                                                            disabled={true}
                                                         />
                                                     </div>
                                                     <div className='space-y-2'>
@@ -147,7 +153,8 @@ const SettingsWrapper: FC = () => {
                                                         </Label>
                                                         <Input
                                                             id='lastName'
-                                                            defaultValue='Doe'
+                                                            defaultValue={user?.lastName!}
+                                                            disabled={true}
                                                         />
                                                     </div>
                                                 </div>
@@ -158,47 +165,12 @@ const SettingsWrapper: FC = () => {
                                                     <Input
                                                         id='email'
                                                         type='email'
-                                                        defaultValue='john.doe@company.com'
+                                                        defaultValue={user?.emailAddresses[0].emailAddress!}
+                                                        disabled={true}
                                                     />
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
-                                            <div className='space-y-2'>
-                                                <Label htmlFor='phone'>
-                                                    Phone
-                                                </Label>
-                                                <Input
-                                                    id='phone'
-                                                    defaultValue='+1 (555) 123-4567'
-                                                />
-                                            </div>
-                                            <div className='space-y-2'>
-                                                <Label htmlFor='location'>
-                                                    Location
-                                                </Label>
-                                                <Input
-                                                    id='location'
-                                                    defaultValue='New York, NY'
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className='space-y-2'>
-                                            <Label htmlFor='bio'>Bio</Label>
-                                            <Textarea
-                                                id='bio'
-                                                placeholder='Tell us about yourself...'
-                                                className='min-h-[100px]'
-                                                defaultValue='Experienced project manager with a passion for team collaboration and delivering results.'
-                                            />
-                                        </div>
-
-                                        <Button>
-                                            <Save className='mr-2 h-4 w-4' />
-                                            Save Changes
-                                        </Button>
                                     </CardContent>
                                 </Card>
                             </TabsContent>
