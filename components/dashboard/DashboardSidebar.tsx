@@ -1,3 +1,5 @@
+"use client"
+
 import {
     Calendar,
     Users,
@@ -23,8 +25,12 @@ import {
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { FC } from 'react';
+import { useClerk, useUser } from '@clerk/nextjs';
 
 export const DashboardSidebar: FC = () => {
+    const {user} = useUser();
+    const {signOut} = useClerk()
+
     const navigation = [
         { title: 'Dashboard', url: '/dashboard', icon: Home },
         { title: 'Projects', url: '/projects', icon: FolderOpen },
@@ -150,8 +156,14 @@ export const DashboardSidebar: FC = () => {
                         </AvatarFallback>
                     </Avatar>
                     <div className='flex-1'>
-                        <div className='text-sm font-medium'>Your Account</div>
-                        <div className='text-xs text-gray-500'>Free Plan</div>
+                        <div className='text-sm font-medium'>
+                            {user?.fullName}
+                        </div>
+                        <Button variant={"link"} size={"sm"} onClick={() => {
+                            signOut()
+                        }}>
+                            Logout
+                        </Button>
                     </div>
                 </div>
             </SidebarFooter>

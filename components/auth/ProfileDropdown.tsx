@@ -1,6 +1,7 @@
 'use client';
 
 import { useClerk, useUser } from '@clerk/nextjs';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect, useRef, ReactNode, FC } from 'react';
 
@@ -174,44 +175,16 @@ const ProfileDropdown: FC = () => {
     const router = useRouter();
 
     return (
-        <div className='flex items-center justify-center p-8 font-sans'>
+        <div className='flex items-center justify-center font-sans'>
             <DropdownMenu
                 trigger={
-                    <button className='flex items-center space-x-3 rounded-lg p-2 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800'>
+                    <button className='flex items-center rounded-lg p-2 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800'>
                         <div className='flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-sm font-semibold text-white'>
                             JD
-                        </div>
-                        <div className='text-left'>
-                            <div className='text-sm font-medium text-zinc-900 dark:text-zinc-100'>
-                                John Doe
-                            </div>
-                            <div className='text-xs text-zinc-500 dark:text-zinc-400'>
-                                john@example.com
-                            </div>
                         </div>
                     </button>
                 }
             >
-                {/* User Info Header */}
-                <div className='border-b border-zinc-200 px-3 py-3 dark:border-zinc-700'>
-                    <div className='flex items-center space-x-3'>
-                        <div className='flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 font-semibold text-white'>
-                            JD
-                        </div>
-                        <div>
-                            <div className='text-sm font-semibold text-zinc-900 dark:text-zinc-100'>
-                                John Doe
-                            </div>
-                            <div className='text-xs text-zinc-500 dark:text-zinc-400'>
-                                john@example.com
-                            </div>
-                            <div className='text-xs font-medium text-blue-600 dark:text-blue-400'>
-                                Pro Plan
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 {/* Menu Items */}
                 <div className='py-1'>
                     <DropdownMenuItem onClick={() => console.log('Profile')}>
@@ -222,6 +195,11 @@ const ProfileDropdown: FC = () => {
 
                 <DropdownMenuSeparator />
 
+                <DropdownMenuItem>
+                    <Link href="/dashboard">Dashboard</Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
                 <div className='py-1'>
                     <DropdownMenuItem
                         onClick={() => {
