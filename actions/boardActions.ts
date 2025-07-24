@@ -8,7 +8,12 @@ import { auth } from '@clerk/nextjs/server';
 export const createNewBoard = actionClient
     .inputSchema(createNewBoardSchema)
     .action(async ({ parsedInput }) => {
-        const { title, description = '', color = '#ffffff', user_id } = parsedInput;
+        const {
+            title,
+            description = '',
+            color = '#ffffff',
+            user_id,
+        } = parsedInput;
 
         const { userId } = await auth();
         if (!userId) {
@@ -35,7 +40,6 @@ export const createNewBoard = actionClient
         return data;
     });
 
-
 export const getBoards = actionClient
     .inputSchema(getBoardsSchema)
     .action(async ({ parsedInput }) => {
@@ -49,7 +53,11 @@ export const getBoards = actionClient
 
         const supabase = createClient();
 
-        const { data: boards, error, count } = await supabase
+        const {
+            data: boards,
+            error,
+            count,
+        } = await supabase
             .from('boards')
             .select('*', { count: 'exact' })
             .eq('user_id', userId)

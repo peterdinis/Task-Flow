@@ -7,8 +7,7 @@ export const createNewBoardSchema = z.object({
     user_id: z.string().min(1),
 });
 
-
 export const getBoardsSchema = z.object({
-  page: z.number().min(1).default(1),
-  limit: z.number().min(1).max(100).default(10),
+    page: z.number().min(1).default(1),
+    limit: z.number().min(1).max(100).default(10),
 });
