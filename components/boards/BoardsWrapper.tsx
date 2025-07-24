@@ -1,4 +1,6 @@
-import { FC } from 'react';
+'use client';
+
+import { FC, useState } from 'react';
 import {
     SidebarProvider,
     SidebarInset,
@@ -30,8 +32,58 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
+import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { createNewBoard } from '@/actions/boardActions';
+import { toast } from 'sonner';
+
+const formSchema = z.object({
+    title: z.string().min(1, 'Title is required'),
+    description: z.string().optional(),
+    color: z.string().optional(),
+});
+
+type FormValues = z.infer<typeof formSchema>;
 
 const BoardsWrapper: FC = () => {
+    const [open, setOpen] = useState(false);
+
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors, isSubmitting },
+    } = useForm<FormValues>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            title: '',
+            description: '',
+            color: '#3b82f6',
+        },
+    });
+
+    const onSubmit = async (values: FormValues) => {
+        try {
+            await createNewBoard(values);
+            reset();
+            setOpen(false);
+            toast.success('Board created successfully!');
+        } catch (error) {
+            console.error('Failed to create board:', error);
+            toast.error('Failed to create board.');
+        }
+    };
+
     const boards = [
         {
             id: 1,
@@ -120,12 +172,60 @@ const BoardsWrapper: FC = () => {
                     <header className='flex h-16 shrink-0 items-center gap-2 border-b px-4 lg:px-6'>
                         <SidebarTrigger className='-ml-1' />
                         <div className='flex-1' />
-                        <Button size='sm' className='ml-auto'>
-                            <Plus className='mr-2 h-4 w-4' />
-                            <span className='hidden sm:inline'>
-                                New Project
-                            </span>
-                        </Button>
+                        <Dialog open={open} onOpenChange={setOpen}>
+                            <DialogTrigger asChild>
+                                <Button size='sm' className='ml-auto'>
+                                    <Plus className='mr-2 h-4 w-4' />
+                                    <span className='hidden sm:inline'>
+                                        New Project
+                                    </span>
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className='sm:max-w-md'>
+                                <DialogHeader>
+                                    <DialogTitle>Create New Board</DialogTitle>
+                                </DialogHeader>
+                                <form
+                                    onSubmit={handleSubmit(onSubmit)}
+                                    className='space-y-4'
+                                >
+                                    <div>
+                                        <Input
+                                            placeholder='Board title'
+                                            {...register('title')}
+                                        />
+                                        {errors.title && (
+                                            <p className='mt-1 text-sm text-red-500'>
+                                                {errors.title.message}
+                                            </p>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <Textarea
+                                            placeholder='Board description'
+                                            {...register('description')}
+                                        />
+                                    </div>
+                                    <div>
+                                        <Input
+                                            type='color'
+                                            {...register('color')}
+                                            className='h-10 w-20 p-1'
+                                        />
+                                    </div>
+                                    <DialogFooter>
+                                        <Button
+                                            type='submit'
+                                            disabled={isSubmitting}
+                                        >
+                                            {isSubmitting
+                                                ? 'Creating...'
+                                                : 'Create'}
+                                        </Button>
+                                    </DialogFooter>
+                                </form>
+                            </DialogContent>
+                        </Dialog>
                     </header>
 
                     <div className='flex-1 space-y-4 p-4 lg:p-6'>
