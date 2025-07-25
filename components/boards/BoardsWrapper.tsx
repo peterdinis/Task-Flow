@@ -1,6 +1,7 @@
 'use client';
 
 import { FC, useState } from 'react';
+import { format } from 'date-fns';
 import {
     SidebarProvider,
     SidebarInset,
@@ -44,7 +45,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { useUser } from '@clerk/nextjs';
 import { FormValues, formSchema } from '@/schemas/boardSchema';
-import { useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { createNewBoard, getBoards } from '@/supabase/queries/boardQueries';
 
 const PAGE_LIMIT = 10;
@@ -249,7 +250,11 @@ const BoardsWrapper: FC = () => {
                                             <div className="text-muted-foreground flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:justify-between">
                                                 <div className="flex items-center">
                                                     <Calendar className="mr-1 h-4 w-4" />
-                                                    <span className="truncate">{project.dueDate || '-'}</span>
+                                                    <span className="truncate">
+                                                        {project.created_at
+                                                            ? format(new Date(project.created_at), 'd. MMMM yyyy')
+                                                            : '-'}
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
