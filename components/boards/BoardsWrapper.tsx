@@ -80,8 +80,6 @@ const BoardsWrapper: FC = () => {
         enabled: !!user?.id,
     });
 
-    console.log('Boards data:', data);
-
     const mutation = useMutation({
         mutationFn: createNewBoard,
         onSuccess: () => {
