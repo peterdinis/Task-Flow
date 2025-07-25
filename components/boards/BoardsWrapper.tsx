@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useState } from 'react';
+import { FC, useState, useEffect, useCallback } from 'react';
 import {
     SidebarProvider,
     SidebarInset,
@@ -43,14 +43,25 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createNewBoard } from '@/actions/boardActions';
+import { createNewBoard, getBoards } from '@/actions/boardActions';
 import { toast } from 'sonner';
 import { useUser } from '@clerk/nextjs';
 import { FormValues, formSchema } from '@/schemas/boardSchema';
+import { useAction } from 'next-safe-action/hooks';
+import { Board } from '@/types/Board';
+
+const PAGE_LIMIT = 10;
 
 const BoardsWrapper: FC = () => {
     const [open, setOpen] = useState(false);
-    const {user} = useUser()
+    const { user } = useUser();
+
+    // Stavy pre boardy + loading + error + stránkovanie
+    const [boards, setBoards] = useState<Board[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(false);
 
     const {
         register,
@@ -63,86 +74,47 @@ const BoardsWrapper: FC = () => {
             title: '',
             description: '',
             color: '#3b82f6',
-            user_id: user?.id!
+            user_id: user?.id || '',
         },
     });
+
+    const { execute: fetchBoards } = useAction(getBoards);
+
+    // Funkcia na načítanie boardov s pagináciou
+    const loadBoards = useCallback(async (page: number) => {
+        setLoading(true);
+        setError(null);
+        try {
+            await fetchBoards({ page, limit: PAGE_LIMIT });
+        } catch (err) {
+            setError((err as Error).message || 'Failed to load boards');
+        } finally {
+            setLoading(false);
+        }
+    }, [fetchBoards]);
+
+    // Načítanie boardov pri mount a pri zmene user ID alebo stránky
+    useEffect(() => {
+        if (user?.id) {
+            loadBoards(page);
+        }
+    }, [user?.id, page, loadBoards]);
 
     const onSubmit = async (values: FormValues) => {
         try {
             await createNewBoard(values);
-            reset();
-            setOpen(false);
             toast.success('Board created successfully!');
+            setOpen(false);
+            reset();
+
+            // Po vytvorení znova načítať boardy od začiatku
+            setPage(1);
+            loadBoards(1);
         } catch (error) {
             console.error('Failed to create board:', error);
             toast.error('Failed to create board.');
         }
     };
-
-    const boards = [
-        {
-            id: 1,
-            name: 'Website Redesign',
-            description:
-                'Complete overhaul of the company website with modern design',
-            status: 'In Progress',
-            progress: 65,
-            dueDate: '2024-02-15',
-            team: ['JD', 'JS', 'MJ'],
-            color: 'bg-blue-500',
-        },
-        {
-            id: 2,
-            name: 'Mobile App',
-            description: 'Native mobile application for iOS and Android',
-            status: 'Planning',
-            progress: 20,
-            dueDate: '2024-03-20',
-            team: ['SW', 'JD'],
-            color: 'bg-green-500',
-        },
-        {
-            id: 3,
-            name: 'Marketing Campaign',
-            description: 'Q1 digital marketing campaign across all channels',
-            status: 'Review',
-            progress: 90,
-            dueDate: '2024-01-30',
-            team: ['JS', 'MJ', 'SW'],
-            color: 'bg-purple-500',
-        },
-        {
-            id: 4,
-            name: 'Data Migration',
-            description: 'Migrate legacy data to new cloud infrastructure',
-            status: 'Completed',
-            progress: 100,
-            dueDate: '2024-01-15',
-            team: ['JD', 'MJ'],
-            color: 'bg-gray-500',
-        },
-        {
-            id: 5,
-            name: 'API Development',
-            description: 'REST API for third-party integrations',
-            status: 'In Progress',
-            progress: 45,
-            dueDate: '2024-02-28',
-            team: ['MJ', 'SW'],
-            color: 'bg-orange-500',
-        },
-        {
-            id: 6,
-            name: 'Security Audit',
-            description:
-                'Comprehensive security review and penetration testing',
-            status: 'Planning',
-            progress: 10,
-            dueDate: '2024-04-10',
-            team: ['JD'],
-            color: 'bg-red-500',
-        },
-    ];
 
     const getStatusColor = (status: string) => {
         switch (status) {
@@ -161,61 +133,43 @@ const BoardsWrapper: FC = () => {
 
     return (
         <SidebarProvider>
-            <div className='flex min-h-screen w-full'>
+            <div className="flex min-h-screen w-full">
                 <DashboardSidebar />
-                <SidebarInset className='flex-1'>
-                    <header className='flex h-16 shrink-0 items-center gap-2 border-b px-4 lg:px-6'>
-                        <SidebarTrigger className='-ml-1' />
-                        <div className='flex-1' />
+                <SidebarInset className="flex-1">
+                    <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4 lg:px-6">
+                        <SidebarTrigger className="-ml-1" />
+                        <div className="flex-1" />
                         <Dialog open={open} onOpenChange={setOpen}>
                             <DialogTrigger asChild>
-                                <Button size='sm' className='ml-auto'>
-                                    <Plus className='mr-2 h-4 w-4' />
-                                    <span className='hidden sm:inline'>
-                                        New Project
-                                    </span>
+                                <Button size="sm" className="ml-auto">
+                                    <Plus className="mr-2 h-4 w-4" />
+                                    <span className="hidden sm:inline">New Project</span>
                                 </Button>
                             </DialogTrigger>
-                            <DialogContent className='sm:max-w-md'>
+                            <DialogContent className="sm:max-w-md">
                                 <DialogHeader>
                                     <DialogTitle>Create New Board</DialogTitle>
                                 </DialogHeader>
-                                <form
-                                    onSubmit={handleSubmit(onSubmit)}
-                                    className='space-y-4'
-                                >
+                                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                                     <div>
-                                        <Input
-                                            placeholder='Board title'
-                                            {...register('title')}
-                                        />
+                                        <Input placeholder="Board title" {...register('title')} />
                                         {errors.title && (
-                                            <p className='mt-1 text-sm text-red-500'>
-                                                {errors.title.message}
-                                            </p>
+                                            <p className="mt-1 text-sm text-red-500">{errors.title.message}</p>
                                         )}
                                     </div>
                                     <div>
-                                        <Textarea
-                                            placeholder='Board description'
-                                            {...register('description')}
-                                        />
+                                        <Textarea placeholder="Board description" {...register('description')} />
                                     </div>
                                     <div>
                                         <Input
-                                            type='color'
+                                            type="color"
                                             {...register('color')}
-                                            className='h-10 w-20 p-1'
+                                            className="h-10 w-20 p-1"
                                         />
                                     </div>
                                     <DialogFooter>
-                                        <Button
-                                            type='submit'
-                                            disabled={isSubmitting}
-                                        >
-                                            {isSubmitting
-                                                ? 'Creating...'
-                                                : 'Create'}
+                                        <Button type="submit" disabled={isSubmitting}>
+                                            {isSubmitting ? 'Creating...' : 'Create'}
                                         </Button>
                                     </DialogFooter>
                                 </form>
@@ -223,146 +177,112 @@ const BoardsWrapper: FC = () => {
                         </Dialog>
                     </header>
 
-                    <div className='flex-1 space-y-4 p-4 lg:p-6'>
-                        <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
+                    <div className="flex-1 space-y-4 p-4 lg:p-6">
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                             <div>
-                                <h1 className='text-foreground text-2xl font-bold sm:text-3xl'>
-                                    Boards
-                                </h1>
-                                <p className='text-muted-foreground'>
-                                    Manage and track all your boards
-                                </p>
+                                <h1 className="text-foreground text-2xl font-bold sm:text-3xl">Boards</h1>
+                                <p className="text-muted-foreground">Manage and track all your boards</p>
                             </div>
                         </div>
 
                         {/* Filters and Search */}
-                        <div className='flex flex-col gap-4 sm:flex-row sm:items-center'>
-                            <div className='relative max-w-sm flex-1'>
-                                <Search className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform' />
-                                <Input
-                                    placeholder='Search for board...'
-                                    className='pl-9'
-                                />
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                            <div className="relative max-w-sm flex-1">
+                                <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform" />
+                                <Input placeholder="Search for board..." className="pl-9" />
                             </div>
-                            <div className='flex gap-2'>
-                                <Button variant='outline' size='sm'>
-                                    <Filter className='mr-2 h-4 w-4' />
+                            <div className="flex gap-2">
+                                <Button variant="outline" size="sm">
+                                    <Filter className="mr-2 h-4 w-4" />
                                     Filter
                                 </Button>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <Button variant='outline' size='sm'>
+                                        <Button variant="outline" size="sm">
                                             Sort by
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent>
-                                        <DropdownMenuItem>
-                                            Name
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem>
-                                            Due Date
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem>
-                                            Status
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem>
-                                            Progress
-                                        </DropdownMenuItem>
+                                        <DropdownMenuItem>Name</DropdownMenuItem>
+                                        <DropdownMenuItem>Due Date</DropdownMenuItem>
+                                        <DropdownMenuItem>Status</DropdownMenuItem>
+                                        <DropdownMenuItem>Progress</DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </div>
                         </div>
 
-                        <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6 xl:grid-cols-3'>
+                        {loading && <p>Loading boards...</p>}
+                        {error && <p className="text-red-500">{error}</p>}
+
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6 xl:grid-cols-3">
                             {boards.map((project) => (
                                 <Card
                                     key={project.id}
-                                    className='cursor-pointer transition-shadow hover:shadow-lg'
+                                    className="cursor-pointer transition-shadow hover:shadow-lg"
                                 >
-                                    <CardHeader className='pb-3'>
-                                        <div className='flex items-start justify-between gap-2'>
-                                            <div className='flex min-w-0 items-center space-x-2'>
+                                    <CardHeader className="pb-3">
+                                        <div className="flex items-start justify-between gap-2">
+                                            <div className="flex min-w-0 items-center space-x-2">
                                                 <div
-                                                    className={`h-3 w-3 rounded-full ${project.color} shrink-0`}
+                                                    className={`h-3 w-3 rounded-full`}
+                                                    style={{ backgroundColor: project.color }}
                                                 ></div>
-                                                <CardTitle className='truncate text-lg'>
-                                                    {project.name}
-                                                </CardTitle>
+                                                <CardTitle className="truncate text-lg">{project.title}</CardTitle>
                                             </div>
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
                                                     <Button
-                                                        variant='ghost'
-                                                        size='sm'
-                                                        className='shrink-0'
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="shrink-0"
                                                     >
-                                                        <MoreHorizontal className='h-4 w-4' />
+                                                        <MoreHorizontal className="h-4 w-4" />
                                                     </Button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent>
-                                                    <DropdownMenuItem>
-                                                        Edit Project
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem>
-                                                        View Details
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem className='text-destructive'>
+                                                    <DropdownMenuItem>Edit Project</DropdownMenuItem>
+                                                    <DropdownMenuItem>View Details</DropdownMenuItem>
+                                                    <DropdownMenuItem className="text-destructive">
                                                         Delete
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </div>
-                                        <CardDescription className='line-clamp-2 text-sm'>
+                                        <CardDescription className="line-clamp-2 text-sm">
                                             {project.description}
                                         </CardDescription>
                                     </CardHeader>
                                     <CardContent>
-                                        <div className='space-y-4'>
-                                            <div className='flex items-center justify-between'>
+                                        <div className="space-y-4">
+                                            <div className="flex items-center justify-between">
                                                 <Badge
                                                     className={getStatusColor(
-                                                        project.status
+                                                        project.status || 'Planning'
                                                     )}
                                                 >
-                                                    {project.status}
+                                                    {project.status || 'Planning'}
                                                 </Badge>
-                                                <span className='text-sm font-medium'>
-                                                    {project.progress}%
+                                                <span className="text-sm font-medium">
+                                                    {project.progress ?? 0}%
                                                 </span>
                                             </div>
 
-                                            <div className='bg-secondary h-2 w-full rounded-full'>
+                                            <div className="bg-secondary h-2 w-full rounded-full">
                                                 <div
-                                                    className='bg-primary h-2 rounded-full transition-all duration-300'
+                                                    className="bg-primary h-2 rounded-full transition-all duration-300"
                                                     style={{
-                                                        width: `${project.progress}%`,
+                                                        width: `${project.progress ?? 0}%`,
                                                     }}
                                                 ></div>
                                             </div>
 
-                                            <div className='text-muted-foreground flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:justify-between'>
-                                                <div className='flex items-center'>
-                                                    <Calendar className='mr-1 h-4 w-4' />
-                                                    <span className='truncate'>
-                                                        {project.dueDate}
+                                            <div className="text-muted-foreground flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:justify-between">
+                                                <div className="flex items-center">
+                                                    <Calendar className="mr-1 h-4 w-4" />
+                                                    <span className="truncate">
+                                                        {project.dueDate || '-'}
                                                     </span>
-                                                </div>
-                                                <div className='flex items-center'>
-                                                    <Users className='mr-1 h-4 w-4' />
-                                                    <div className='flex -space-x-1'>
-                                                        {project.team.map(
-                                                            (member, index) => (
-                                                                <Avatar
-                                                                    key={index}
-                                                                    className='border-background h-6 w-6 border-2'
-                                                                >
-                                                                    <AvatarFallback className='bg-gradient-to-br from-blue-500 to-purple-500 text-xs text-white'>
-                                                                        {member}
-                                                                    </AvatarFallback>
-                                                                </Avatar>
-                                                            )
-                                                        )}
-                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
