@@ -48,6 +48,7 @@ import { useUser } from '@clerk/nextjs';
 import { FormValues, formSchema } from '@/schemas/boardSchema';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { createNewBoard, getBoards } from '@/supabase/queries/boardQueries';
+import { Board } from '@/types/Board';
 
 const PAGE_LIMIT = 10;
 
@@ -197,7 +198,7 @@ const BoardsWrapper: FC = () => {
                         {isError && <p className="text-red-500">{(error as Error).message}</p>}
 
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6 xl:grid-cols-3">
-                            {data?.boards.map((project: any) => (
+                            {data?.boards.map((project: Board) => (
                                 <Card
                                     key={project.id}
                                     className="cursor-pointer transition-shadow hover:shadow-lg"
