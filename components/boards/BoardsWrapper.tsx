@@ -1,6 +1,7 @@
 'use client';
 
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
+import { format } from 'date-fns';
 import {
     SidebarProvider,
     SidebarInset,
@@ -16,14 +17,13 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
     Plus,
     MoreHorizontal,
     Calendar,
-    Users,
     Filter,
     Search,
+    Loader2,
 } from 'lucide-react';
 import {
     DropdownMenu,
@@ -42,53 +42,22 @@ import {
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createNewBoard, getBoards } from '@/actions/boardActions';
 import { toast } from 'sonner';
 import { useUser } from '@clerk/nextjs';
-import { useAction } from 'next-safe-action/hooks';
+import { FormValues, formSchema } from '@/schemas/boardSchema';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { createNewBoard, getBoards } from '@/supabase/queries/boardQueries';
+import { Board } from '@/types/Board';
 
-type Board = {
-    id: string;
-    title: string;
-    description: string | null;
-    color: string;
-    status: string | null;
-    progress: number | null;
-    dueDate: string | null;
-    team: string[]; // uprav podľa potreby
-    created_at: string;
-    user_id: string;
-};
-
-const formSchema = z.object({
-    title: z.string().min(1, 'Title is required'),
-    description: z.string().optional(),
-    color: z.string().optional(),
-    user_id: z.string(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+const PAGE_LIMIT = 10;
 
 const BoardsWrapper: FC = () => {
     const [open, setOpen] = useState(false);
     const { user } = useUser();
-    const [boards, setBoards] = useState<Board[]>([]);
+    const [page] = useState(1);
 
-    const { execute: fetchBoards, status, result } = useAction(getBoards);
-
-    useEffect(() => {
-        if (user?.id) {
-            fetchBoards({ page: 1, limit: 10 });
-        }
-    }, [fetchBoards, user?.id]);
-
-    useEffect(() => {
-        if (result?.data) {
-            setBoards(result.data.boards);
-        }
-    }, [result]);
+    const queryClient = useQueryClient();
 
     const {
         register,
@@ -105,20 +74,32 @@ const BoardsWrapper: FC = () => {
         },
     });
 
-    const onSubmit = async (values: FormValues) => {
-        try {
-            await createNewBoard(values);
-            reset();
-            setOpen(false);
+    const { data, isLoading, isError, error } = useQuery({
+        queryKey: ['boards', page],
+        queryFn: () => getBoards({ page, limit: PAGE_LIMIT }),
+        enabled: !!user?.id,
+    });
+
+    console.log('Boards data:', data);
+
+    const mutation = useMutation({
+        mutationFn: createNewBoard,
+        onSuccess: () => {
             toast.success('Board created successfully!');
-            fetchBoards({ page: 1, limit: 10 });
-        } catch (error) {
-            console.error('Failed to create board:', error);
-            toast.error('Failed to create board.');
-        }
+            setOpen(false);
+            reset();
+            queryClient.invalidateQueries({ queryKey: ['boards'] });
+        },
+        onError: (err: any) => {
+            toast.error(err?.message || 'Failed to create board');
+        },
+    });
+
+    const onSubmit = (values: FormValues) => {
+        mutation.mutate(values);
     };
 
-    const getStatusColor = (status: string | null | undefined) => {
+    const getStatusColor = (status: string) => {
         switch (status) {
             case 'Completed':
                 return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
@@ -135,120 +116,157 @@ const BoardsWrapper: FC = () => {
 
     return (
         <SidebarProvider>
-            <SidebarInset className='flex flex-col gap-4 py-4 pr-6 pl-8'>
-                <div className='flex items-center gap-4'>
-                    <h1 className='text-2xl font-bold'>Projects</h1>
-                    <Button
-                        variant='outline'
-                        size='sm'
-                        className='ml-auto gap-1'
-                    >
-                        <Filter className='h-4 w-4' />
-                        Filter
-                    </Button>
-                    <Button variant='outline' size='sm'>
-                        <Calendar className='mr-2 h-4 w-4' />
-                        This Month
-                    </Button>
-                </div>
-                <div className='relative'>
-                    <Search className='text-muted-foreground absolute top-2.5 left-3 h-4 w-4' />
-                    <Input placeholder='Search projects...' className='pl-10' />
-                </div>
-                <div className='grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
-                    {boards.map((project: Board) => (
-                        <Card key={project.id}>
-                            <CardHeader className='pb-2'>
-                                <CardDescription>
-                                    {project.dueDate || 'No due date'}
-                                </CardDescription>
-                                <CardTitle className='line-clamp-1'>
-                                    {project.title}
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className='text-muted-foreground flex space-x-2 text-sm'>
-                                    <div>{project.progress ?? 0}%</div>
-                                    <div>•</div>
+            <div className="flex min-h-screen w-full">
+                <DashboardSidebar />
+                <SidebarInset className="flex-1">
+                    <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4 lg:px-6">
+                        <SidebarTrigger className="-ml-1" />
+                        <div className="flex-1" />
+                        <Dialog open={open} onOpenChange={setOpen}>
+                            <DialogTrigger asChild>
+                                <Button size="sm" className="ml-auto">
+                                    <Plus className="mr-2 h-4 w-4" />
+                                    <span className="hidden sm:inline">New Project</span>
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-md">
+                                <DialogHeader>
+                                    <DialogTitle>Create New Board</DialogTitle>
+                                </DialogHeader>
+                                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                                     <div>
-                                        {project.team?.length ?? 0} Members
-                                    </div>
-                                </div>
-                                <div className='mt-2 flex items-center justify-between'>
-                                    <Badge
-                                        className={getStatusColor(
-                                            project.status
+                                        <Input placeholder="Board title" {...register('title')} />
+                                        {errors.title && (
+                                            <p className="mt-1 text-sm text-red-500">{errors.title.message}</p>
                                         )}
-                                    >
-                                        {project.status || 'Planning'}
-                                    </Badge>
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant='ghost' size='icon'>
-                                                <MoreHorizontal className='h-4 w-4' />
-                                                <span className='sr-only'>
-                                                    More
+                                    </div>
+                                    <div>
+                                        <Textarea placeholder="Board description" {...register('description')} />
+                                    </div>
+                                    <div>
+                                        <Input
+                                            type="color"
+                                            {...register('color')}
+                                            className="h-10 w-20 p-1"
+                                        />
+                                    </div>
+                                    <DialogFooter>
+                                        <Button type="submit" disabled={isSubmitting || mutation.isPending}>
+                                            {mutation.isPending ? 'Creating...' : 'Create'}
+                                        </Button>
+                                    </DialogFooter>
+                                </form>
+                            </DialogContent>
+                        </Dialog>
+                    </header>
+
+                    <div className="flex-1 space-y-4 p-4 lg:p-6">
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                                <h1 className="text-foreground text-2xl font-bold sm:text-3xl">Boards</h1>
+                                <p className="text-muted-foreground">Manage and track all your boards</p>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                            <div className="relative max-w-sm flex-1">
+                                <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform" />
+                                <Input placeholder="Search for board..." className="pl-9" />
+                            </div>
+                            <div className="flex gap-2">
+                                <Button variant="outline" size="sm">
+                                    <Filter className="mr-2 h-4 w-4" />
+                                    Filter
+                                </Button>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="outline" size="sm">
+                                            Sort by
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                        <DropdownMenuItem>Name</DropdownMenuItem>
+                                        <DropdownMenuItem>Due Date</DropdownMenuItem>
+                                        <DropdownMenuItem>Status</DropdownMenuItem>
+                                        <DropdownMenuItem>Progress</DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
+                        </div>
+
+                        {isLoading && <Loader2 className='animate-spin w-8 h-8' />}
+                        {isError && <p className="text-red-500">{(error as Error).message}</p>}
+
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6 xl:grid-cols-3">
+                            {data?.boards.map((project: Board) => (
+                                <Card
+                                    key={project.id}
+                                    className="cursor-pointer transition-shadow hover:shadow-lg"
+                                >
+                                    <CardHeader className="pb-3">
+                                        <div className="flex items-start justify-between gap-2">
+                                            <div className="flex min-w-0 items-center space-x-2">
+                                                <div
+                                                    className={`h-3 w-3 rounded-full`}
+                                                    style={{ backgroundColor: project.color }}
+                                                ></div>
+                                                <CardTitle className="truncate text-lg">{project.title}</CardTitle>
+                                            </div>
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="ghost" size="sm" className="shrink-0">
+                                                        <MoreHorizontal className="h-4 w-4" />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent>
+                                                    <DropdownMenuItem>Edit Project</DropdownMenuItem>
+                                                    <DropdownMenuItem>View Details</DropdownMenuItem>
+                                                    <DropdownMenuItem className="text-destructive">
+                                                        Delete
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </div>
+                                        <CardDescription className="line-clamp-2 text-sm">
+                                            {project.description}
+                                        </CardDescription>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="space-y-4">
+                                            <div className="flex items-center justify-between">
+                                                <Badge className={getStatusColor(project.status || 'Planning')}>
+                                                    {project.status || 'Planning'}
+                                                </Badge>
+                                                <span className="text-sm font-medium">
+                                                    {project.progress ?? 0}%
                                                 </span>
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align='end'>
-                                            <DropdownMenuItem>
-                                                Edit
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem>
-                                                Delete
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
-            </SidebarInset>
-            <DashboardSidebar />
-            <SidebarTrigger className='h-10 w-10 border' />
-            <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
-                    <Button variant='outline' className='w-full justify-start'>
-                        <Plus className='mr-2 h-4 w-4' />
-                        Add Board
-                    </Button>
-                </DialogTrigger>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Create Board</DialogTitle>
-                    </DialogHeader>
-                    <form
-                        onSubmit={handleSubmit(onSubmit)}
-                        className='grid gap-4 py-4'
-                    >
-                        <Input
-                            placeholder='Board title'
-                            {...register('title')}
-                        />
-                        {errors.title && (
-                            <p className='text-sm text-red-500'>
-                                {errors.title.message}
-                            </p>
-                        )}
-                        <Textarea
-                            placeholder='Description'
-                            {...register('description')}
-                        />
-                        <input
-                            type='hidden'
-                            value={user?.id}
-                            {...register('user_id')}
-                        />
-                        <DialogFooter>
-                            <Button type='submit' disabled={isSubmitting}>
-                                Create
-                            </Button>
-                        </DialogFooter>
-                    </form>
-                </DialogContent>
-            </Dialog>
+                                            </div>
+
+                                            <div className="bg-secondary h-2 w-full rounded-full">
+                                                <div
+                                                    className="bg-primary h-2 rounded-full transition-all duration-300"
+                                                    style={{ width: `${project.progress ?? 0}%` }}
+                                                ></div>
+                                            </div>
+
+                                            <div className="text-muted-foreground flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:justify-between">
+                                                <div className="flex items-center">
+                                                    <Calendar className="mr-1 h-4 w-4" />
+                                                    <span className="truncate">
+                                                        {project.created_at
+                                                            ? format(new Date(project.created_at), 'd. MMMM yyyy')
+                                                            : '-'}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
+                    </div>
+                </SidebarInset>
+            </div>
         </SidebarProvider>
     );
 };

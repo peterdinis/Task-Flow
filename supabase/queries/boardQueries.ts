@@ -1,3 +1,5 @@
+"use server"
+
 import { createNewBoardSchema, getBoardsSchema } from '@/schemas/boardSchema';
 import { auth } from '@clerk/nextjs/server';
 import { createClient } from '../setup/client';
