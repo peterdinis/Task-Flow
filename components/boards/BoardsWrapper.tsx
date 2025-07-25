@@ -23,6 +23,7 @@ import {
     Calendar,
     Filter,
     Search,
+    Loader2,
 } from 'lucide-react';
 import {
     DropdownMenu,
@@ -192,7 +193,7 @@ const BoardsWrapper: FC = () => {
                             </div>
                         </div>
 
-                        {isLoading && <p>Loading boards...</p>}
+                        {isLoading && <Loader2 className='animate-spin w-8 h-8' />}
                         {isError && <p className="text-red-500">{(error as Error).message}</p>}
 
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6 xl:grid-cols-3">
