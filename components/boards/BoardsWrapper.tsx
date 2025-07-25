@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useState, useEffect, useCallback } from 'react';
+import { FC, JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, useState } from 'react';
 import {
     SidebarProvider,
     SidebarInset,
@@ -43,23 +43,20 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createNewBoard, getBoards } from '@/actions/boardActions';
 import { toast } from 'sonner';
 import { useUser } from '@clerk/nextjs';
 import { FormValues, formSchema } from '@/schemas/boardSchema';
-import { useAction } from 'next-safe-action/hooks';
-import { Board } from '@/types/Board';
+import { useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
+import { createNewBoard, getBoards } from '@/supabase/queries/boardQueries';
 
 const PAGE_LIMIT = 10;
 
 const BoardsWrapper: FC = () => {
     const [open, setOpen] = useState(false);
     const { user } = useUser();
-
-    const [boards, setBoards] = useState<Board[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(1);
+
+    const queryClient = useQueryClient();
 
     const {
         register,
@@ -76,40 +73,27 @@ const BoardsWrapper: FC = () => {
         },
     });
 
-    const { execute: fetchBoards } = useAction(getBoards);
+    const { data, isLoading, isError, error } = useQuery({
+        queryKey: ['boards', page],
+        queryFn: () => getBoards({ page, limit: PAGE_LIMIT }),
+        enabled: !!user?.id,
+    });
 
-    const loadBoards = useCallback(async (page: number) => {
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await fetchBoards({ page, limit: PAGE_LIMIT });
-            console.log('Fetched boards:', response);
-        } catch (err) {
-            setError((err as Error).message || 'Failed to load boards');
-        } finally {
-            setLoading(false);
-        }
-    }, [fetchBoards]);
-    useEffect(() => {
-        if (user?.id) {
-            loadBoards(page);
-        }
-    }, [user?.id, page, loadBoards]);
-
-    const onSubmit = async (values: FormValues) => {
-        try {
-            await createNewBoard(values);
+    const mutation = useMutation({
+        mutationFn: createNewBoard,
+        onSuccess: () => {
             toast.success('Board created successfully!');
             setOpen(false);
             reset();
+            queryClient.invalidateQueries({ queryKey: ['boards'] });
+        },
+        onError: (err: any) => {
+            toast.error(err?.message || 'Failed to create board');
+        },
+    });
 
-            // Po vytvorení znova načítať boardy od začiatku
-            setPage(1);
-            loadBoards(1);
-        } catch (error) {
-            console.error('Failed to create board:', error);
-            toast.error('Failed to create board.');
-        }
+    const onSubmit = (values: FormValues) => {
+        mutation.mutate(values);
     };
 
     const getStatusColor = (status: string) => {
@@ -164,8 +148,8 @@ const BoardsWrapper: FC = () => {
                                         />
                                     </div>
                                     <DialogFooter>
-                                        <Button type="submit" disabled={isSubmitting}>
-                                            {isSubmitting ? 'Creating...' : 'Create'}
+                                        <Button type="submit" disabled={isSubmitting || mutation.isPending}>
+                                            {mutation.isPending ? 'Creating...' : 'Create'}
                                         </Button>
                                     </DialogFooter>
                                 </form>
@@ -181,7 +165,6 @@ const BoardsWrapper: FC = () => {
                             </div>
                         </div>
 
-                        {/* Filters and Search */}
                         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                             <div className="relative max-w-sm flex-1">
                                 <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform" />
@@ -208,11 +191,11 @@ const BoardsWrapper: FC = () => {
                             </div>
                         </div>
 
-                        {loading && <p>Loading boards...</p>}
-                        {error && <p className="text-red-500">{error}</p>}
+                        {isLoading && <p>Loading boards...</p>}
+                        {isError && <p className="text-red-500">{(error as Error).message}</p>}
 
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6 xl:grid-cols-3">
-                            {boards.map((project) => (
+                            {data?.boards.map((project: { id: Key | null | undefined; color: any; title: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; description: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; status: any; progress: any; dueDate: any; }) => (
                                 <Card
                                     key={project.id}
                                     className="cursor-pointer transition-shadow hover:shadow-lg"
@@ -228,11 +211,7 @@ const BoardsWrapper: FC = () => {
                                             </div>
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        className="shrink-0"
-                                                    >
+                                                    <Button variant="ghost" size="sm" className="shrink-0">
                                                         <MoreHorizontal className="h-4 w-4" />
                                                     </Button>
                                                 </DropdownMenuTrigger>
@@ -252,11 +231,7 @@ const BoardsWrapper: FC = () => {
                                     <CardContent>
                                         <div className="space-y-4">
                                             <div className="flex items-center justify-between">
-                                                <Badge
-                                                    className={getStatusColor(
-                                                        project.status || 'Planning'
-                                                    )}
-                                                >
+                                                <Badge className={getStatusColor(project.status || 'Planning')}>
                                                     {project.status || 'Planning'}
                                                 </Badge>
                                                 <span className="text-sm font-medium">
@@ -267,18 +242,14 @@ const BoardsWrapper: FC = () => {
                                             <div className="bg-secondary h-2 w-full rounded-full">
                                                 <div
                                                     className="bg-primary h-2 rounded-full transition-all duration-300"
-                                                    style={{
-                                                        width: `${project.progress ?? 0}%`,
-                                                    }}
+                                                    style={{ width: `${project.progress ?? 0}%` }}
                                                 ></div>
                                             </div>
 
                                             <div className="text-muted-foreground flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:justify-between">
                                                 <div className="flex items-center">
                                                     <Calendar className="mr-1 h-4 w-4" />
-                                                    <span className="truncate">
-                                                        {project.dueDate || '-'}
-                                                    </span>
+                                                    <span className="truncate">{project.dueDate || '-'}</span>
                                                 </div>
                                             </div>
                                         </div>
