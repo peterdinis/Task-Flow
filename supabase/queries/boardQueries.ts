@@ -74,3 +74,25 @@ export async function getBoards(input: unknown) {
         hasMore: (count ?? 0) > page * limit,
     };
 }
+
+
+export async function getAllBoards() {
+    const { userId } = await auth();
+    if (!userId) {
+        throw new Error('Unauthorized');
+    }
+
+    const supabase = createClient();
+
+    const { data: boards, error } = await supabase
+        .from('boards')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        throw new Error(error.message);
+    }
+
+    return boards;
+}
