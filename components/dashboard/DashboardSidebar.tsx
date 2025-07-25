@@ -87,7 +87,7 @@ export const DashboardSidebar: FC = () => {
                 </SidebarGroup>
 
                 <SidebarGroup>
-                    <SidebarGroupLabel className='px-3 py-2 text-xs font-semibold tracking-wider text-gray-500 uppercase'>
+                    <SidebarGroupLabel className='px-3 py-2 text-xs font-semibold tracking-wider text-gray-500 dark:text-sky-200 uppercase'>
                         Recent Boards
                     </SidebarGroupLabel>
                     <SidebarGroupContent>
@@ -114,7 +114,7 @@ export const DashboardSidebar: FC = () => {
                             <Button
                                 variant='ghost'
                                 size='sm'
-                                className='w-full justify-start text-gray-600'
+                                className='w-full justify-start text-gray-600 dark:text-sky-300'
                             >
                                 <Plus className='mr-2 h-4 w-4' />
                                 New Project
@@ -124,7 +124,7 @@ export const DashboardSidebar: FC = () => {
                 </SidebarGroup>
 
                 <SidebarGroup>
-                    <SidebarGroupLabel className='px-3 py-2 text-xs font-semibold tracking-wider text-gray-500 uppercase'>
+                    <SidebarGroupLabel className='px-3 py-2 text-xs font-semibold tracking-wider text-gray-500 dark:text-sky-200 uppercase'>
                         Team Members
                     </SidebarGroupLabel>
                     <SidebarGroupContent>
@@ -137,7 +137,7 @@ export const DashboardSidebar: FC = () => {
                                                 {member.initials}
                                             </AvatarFallback>
                                         </Avatar>
-                                        <span className='text-sm text-gray-700'>
+                                        <span className='text-sm text-gray-700 dark:text-sky-100'>
                                             {member.name}
                                         </span>
                                     </div>

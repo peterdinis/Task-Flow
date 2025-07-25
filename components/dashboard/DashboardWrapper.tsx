@@ -221,7 +221,7 @@ const DashboardWrapper: FC = () => {
                         <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
                             <div>
                                 <h1 className='text-foreground text-2xl font-bold sm:text-3xl'>
-                                    Welcome back! {user?.firstName + user?.lastName!}
+                                    Welcome back! {user?.firstName + user?.lastName!} 👋
                                 </h1>
                                 <p className='text-muted-foreground'>
                                     Here&apos;s what&apos;s happening with your
