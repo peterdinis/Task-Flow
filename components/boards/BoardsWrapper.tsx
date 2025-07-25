@@ -42,20 +42,11 @@ import {
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createNewBoard } from '@/actions/boardActions';
 import { toast } from 'sonner';
 import { useUser } from '@clerk/nextjs';
-
-const formSchema = z.object({
-    title: z.string().min(1, 'Title is required'),
-    description: z.string().optional(),
-    color: z.string().optional(),
-    user_id: z.string() // Assuming user_id is optional here, adjust as needed
-});
-
-type FormValues = z.infer<typeof formSchema>;
+import { FormValues, formSchema } from '@/schemas/boardSchema';
 
 const BoardsWrapper: FC = () => {
     const [open, setOpen] = useState(false);
