@@ -34,7 +34,7 @@ import Link from 'next/link';
 
 const DashboardWrapper: FC = () => {
     const {user} = useUser();
-    
+
     const recentProjects = [
         {
             id: 1,
@@ -281,7 +281,9 @@ const DashboardWrapper: FC = () => {
                                         <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
                                             <CardTitle>Recent Boards</CardTitle>
                                             <Button variant='outline' size='sm'>
-                                                View All
+                                                <Link href="/boards">
+                                                    Boards
+                                                </Link>
                                             </Button>
                                         </div>
                                     </CardHeader>
