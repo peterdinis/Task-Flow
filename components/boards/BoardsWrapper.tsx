@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, useState } from 'react';
+import { FC, useState } from 'react';
 import {
     SidebarProvider,
     SidebarInset,
@@ -16,12 +16,10 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
     Plus,
     MoreHorizontal,
     Calendar,
-    Users,
     Filter,
     Search,
 } from 'lucide-react';
@@ -54,7 +52,7 @@ const PAGE_LIMIT = 10;
 const BoardsWrapper: FC = () => {
     const [open, setOpen] = useState(false);
     const { user } = useUser();
-    const [page, setPage] = useState(1);
+    const [page] = useState(1);
 
     const queryClient = useQueryClient();
 
@@ -78,6 +76,8 @@ const BoardsWrapper: FC = () => {
         queryFn: () => getBoards({ page, limit: PAGE_LIMIT }),
         enabled: !!user?.id,
     });
+
+    console.log('Boards data:', data);
 
     const mutation = useMutation({
         mutationFn: createNewBoard,
@@ -195,7 +195,7 @@ const BoardsWrapper: FC = () => {
                         {isError && <p className="text-red-500">{(error as Error).message}</p>}
 
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6 xl:grid-cols-3">
-                            {data?.boards.map((project: { id: Key | null | undefined; color: any; title: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; description: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; status: any; progress: any; dueDate: any; }) => (
+                            {data?.boards.map((project: any) => (
                                 <Card
                                     key={project.id}
                                     className="cursor-pointer transition-shadow hover:shadow-lg"
