@@ -33,7 +33,7 @@ import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 
 const DashboardWrapper: FC = () => {
-    const {user} = useUser();
+    const { user } = useUser();
 
     const recentProjects = [
         {
@@ -221,7 +221,8 @@ const DashboardWrapper: FC = () => {
                         <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
                             <div>
                                 <h1 className='text-foreground text-2xl font-bold sm:text-3xl'>
-                                    Welcome back! {user?.firstName + user?.lastName!} 👋
+                                    Welcome back!{' '}
+                                    {user?.firstName + user?.lastName!} 👋
                                 </h1>
                                 <p className='text-muted-foreground'>
                                     Here&apos;s what&apos;s happening with your
@@ -232,17 +233,13 @@ const DashboardWrapper: FC = () => {
                                 <Button variant='outline' size='sm'>
                                     <Calendar className='mr-2 h-4 w-4' />
                                     <span className='hidden sm:inline'>
-                                        <Link href="/calendar">
-                                            Schedule
-                                        </Link>
+                                        <Link href='/calendar'>Schedule</Link>
                                     </span>
                                 </Button>
                                 <Button variant='outline' size='sm'>
                                     <Users className='mr-2 h-4 w-4' />
                                     <span className='hidden sm:inline'>
-                                        <Link href="/team">
-                                            Team
-                                        </Link>
+                                        <Link href='/team'>Team</Link>
                                     </span>
                                 </Button>
                             </div>
@@ -281,7 +278,7 @@ const DashboardWrapper: FC = () => {
                                         <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
                                             <CardTitle>Recent Boards</CardTitle>
                                             <Button variant='outline' size='sm'>
-                                                <Link href="/boards">
+                                                <Link href='/boards'>
                                                     Boards
                                                 </Link>
                                             </Button>

@@ -1,4 +1,4 @@
-"use server"
+'use server';
 
 import { createNewBoardSchema, getBoardsSchema } from '@/schemas/boardSchema';
 import { auth } from '@clerk/nextjs/server';
@@ -74,7 +74,6 @@ export async function getBoards(input: unknown) {
         hasMore: (count ?? 0) > page * limit,
     };
 }
-
 
 export async function getAllBoards() {
     const { userId } = await auth();

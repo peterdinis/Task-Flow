@@ -87,7 +87,7 @@ export const DashboardSidebar: FC = () => {
                 </SidebarGroup>
 
                 <SidebarGroup>
-                    <SidebarGroupLabel className='px-3 py-2 text-xs font-semibold tracking-wider text-gray-500 dark:text-sky-200 uppercase'>
+                    <SidebarGroupLabel className='px-3 py-2 text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-sky-200'>
                         Recent Boards
                     </SidebarGroupLabel>
                     <SidebarGroupContent>
@@ -124,7 +124,7 @@ export const DashboardSidebar: FC = () => {
                 </SidebarGroup>
 
                 <SidebarGroup>
-                    <SidebarGroupLabel className='px-3 py-2 text-xs font-semibold tracking-wider text-gray-500 dark:text-sky-200 uppercase'>
+                    <SidebarGroupLabel className='px-3 py-2 text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-sky-200'>
                         Team Members
                     </SidebarGroupLabel>
                     <SidebarGroupContent>
