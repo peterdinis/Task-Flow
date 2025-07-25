@@ -56,12 +56,10 @@ const BoardsWrapper: FC = () => {
     const [open, setOpen] = useState(false);
     const { user } = useUser();
 
-    // Stavy pre boardy + loading + error + stránkovanie
     const [boards, setBoards] = useState<Board[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(false);
 
     const {
         register,
@@ -80,20 +78,18 @@ const BoardsWrapper: FC = () => {
 
     const { execute: fetchBoards } = useAction(getBoards);
 
-    // Funkcia na načítanie boardov s pagináciou
     const loadBoards = useCallback(async (page: number) => {
         setLoading(true);
         setError(null);
         try {
-            await fetchBoards({ page, limit: PAGE_LIMIT });
+            const response = await fetchBoards({ page, limit: PAGE_LIMIT });
+            console.log('Fetched boards:', response);
         } catch (err) {
             setError((err as Error).message || 'Failed to load boards');
         } finally {
             setLoading(false);
         }
     }, [fetchBoards]);
-
-    // Načítanie boardov pri mount a pri zmene user ID alebo stránky
     useEffect(() => {
         if (user?.id) {
             loadBoards(page);
