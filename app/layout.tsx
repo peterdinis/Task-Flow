@@ -5,6 +5,7 @@ import { ScrollToTopButton } from '@/components/shared/ScrollToTop';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import AppClerkProvider from '@/components/providers/ClerkProvider';
 import { Toaster } from '@/components/ui/toaster';
+import QueryProvider from '@/components/shared/providers/QueryProvider';
 
 const geistSans = Ubuntu({
     weight: '700',
@@ -31,9 +32,11 @@ export default function RootLayout({
                     disableTransitionOnChange
                 >
                     <AppClerkProvider>
-                        {children}
-                        <ScrollToTopButton />
-                        <Toaster />
+                        <QueryProvider>
+                            {children}
+                            <ScrollToTopButton />
+                            <Toaster />
+                        </QueryProvider>
                     </AppClerkProvider>
                 </ThemeProvider>
             </body>
