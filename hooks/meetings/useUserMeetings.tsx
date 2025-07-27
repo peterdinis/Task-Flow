@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import { getMeetings } from '@/supabase/queries/meetingQueries';
 import { useQuery } from '@tanstack/react-query';

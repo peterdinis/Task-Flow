@@ -1,16 +1,19 @@
-"use server"
+'use server';
 
 import { auth } from '@clerk/nextjs/server';
 import { createClient } from '../setup/client';
-import { createNewMeetingSchema, getAllMeetingsSchema } from '@/schemas/meetingSchema';
+import {
+    createNewMeetingSchema,
+    getAllMeetingsSchema,
+} from '@/schemas/meetingSchema';
 
 export async function createMeeting(input: unknown) {
-    const parsed = createNewMeetingSchema.safeParse(input)
+    const parsed = createNewMeetingSchema.safeParse(input);
     if (!parsed.success) {
         throw new Error('Invalid input');
     }
 
-    const {name, description, start_date, from, to, type} = parsed.data
+    const { name, description, start_date, from, to, type } = parsed.data;
 
     const { userId } = await auth();
     if (!userId) {
@@ -19,15 +22,18 @@ export async function createMeeting(input: unknown) {
 
     const supabase = createClient();
 
-    const {data, error} = await supabase.from("meetings")
-    .insert({
-        name,
-        description,
-        start_date,
-        from,
-        to,
-        type
-    }).select().single()
+    const { data, error } = await supabase
+        .from('meetings')
+        .insert({
+            name,
+            description,
+            start_date,
+            from,
+            to,
+            type,
+        })
+        .select()
+        .single();
 
     if (error) {
         throw new Error(error.message);

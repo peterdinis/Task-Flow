@@ -7,12 +7,7 @@ import {
     SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { DashboardSidebar } from '../dashboard/DashboardSidebar';
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
@@ -173,9 +168,13 @@ const CalendarWrapper: FC = () => {
                                     </CardHeader>
                                     <CardContent className='space-y-4'>
                                         {isLoading ? (
-                                            <p className="text-sm text-muted-foreground">Loading events...</p>
+                                            <p className='text-muted-foreground text-sm'>
+                                                Loading events...
+                                            </p>
                                         ) : meetings.length === 0 ? (
-                                            <p className="text-sm text-muted-foreground">No events</p>
+                                            <p className='text-muted-foreground text-sm'>
+                                                No events
+                                            </p>
                                         ) : (
                                             meetings.map((event: any) => (
                                                 <div
@@ -196,7 +195,8 @@ const CalendarWrapper: FC = () => {
                                                         </Badge>
                                                     </div>
                                                     <p className='text-muted-foreground text-sm'>
-                                                        {event.from}–{event.to} • {event.start_date}
+                                                        {event.from}–{event.to}{' '}
+                                                        • {event.start_date}
                                                     </p>
                                                 </div>
                                             ))

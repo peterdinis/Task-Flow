@@ -1,4 +1,4 @@
-import z from "zod"
+import z from 'zod';
 
 export const createNewMeetingSchema = z.object({
     name: z.string().min(1),
@@ -6,8 +6,8 @@ export const createNewMeetingSchema = z.object({
     start_date: z.date().min(1),
     from: z.date(),
     to: z.date(),
-    type: z.string()
-})
+    type: z.string(),
+});
 
 export const getAllMeetingsSchema = z.object({
     page: z.number().min(1).default(1),
