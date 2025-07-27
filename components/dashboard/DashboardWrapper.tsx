@@ -27,7 +27,7 @@ import {
     MoreHorizontal,
 } from 'lucide-react';
 import { DashboardSidebar } from './DashboardSidebar';
-import { FC } from 'react';
+import { FC, unstable_ViewTransition as ViewTransition } from 'react';
 import { ModeToggle } from '../shared/ModeToggle';
 import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
@@ -200,7 +200,8 @@ const DashboardWrapper: FC = () => {
     };
 
     return (
-        <SidebarProvider>
+        <ViewTransition enter={"slide-in"}>
+            <SidebarProvider>
             <div className='flex min-h-screen w-full'>
                 <DashboardSidebar />
                 <SidebarInset className='flex-1'>
@@ -437,6 +438,7 @@ const DashboardWrapper: FC = () => {
                 </SidebarInset>
             </div>
         </SidebarProvider>
+        </ViewTransition>
     );
 };
 
