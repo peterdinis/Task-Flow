@@ -12,50 +12,27 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
+import {
+    Dialog,
+    DialogTrigger,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogFooter,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { useUserMeetings } from '@/hooks/meetings/useUserMeetings';
+import { useCreateMeeting } from '@/hooks/meetings/useCreateMeeting';
 
 const CalendarWrapper: FC = () => {
     const [date, setDate] = useState<Date | undefined>(new Date());
     const [currentDate, setCurrentDate] = useState(new Date());
 
-    const events = [
-        {
-            id: 1,
-            title: 'Team Meeting',
-            time: '09:00',
-            date: '2024-01-20',
-            type: 'meeting',
-        },
-        {
-            id: 2,
-            title: 'Project Deadline',
-            time: '17:00',
-            date: '2024-01-22',
-            type: 'deadline',
-        },
-        {
-            id: 3,
-            title: 'Client Call',
-            time: '14:00',
-            date: '2024-01-23',
-            type: 'call',
-        },
-        {
-            id: 4,
-            title: 'Sprint Planning',
-            time: '10:00',
-            date: '2024-01-25',
-            type: 'meeting',
-        },
-        {
-            id: 5,
-            title: 'Design Review',
-            time: '15:30',
-            date: '2024-01-26',
-            type: 'review',
-        },
-    ];
-
-    const upcomingEvents = events.slice(0, 3);
+    const { data, isLoading } = useUserMeetings({ page: 1, limit: 5 });
+    const meetings = data?.meetings ?? [];
 
     const getEventTypeColor = (type: string) => {
         switch (type) {
@@ -89,11 +66,9 @@ const CalendarWrapper: FC = () => {
 
     const navigateMonth = (direction: 'prev' | 'next') => {
         const newDate = new Date(currentDate);
-        if (direction === 'prev') {
-            newDate.setMonth(newDate.getMonth() - 1);
-        } else {
-            newDate.setMonth(newDate.getMonth() + 1);
-        }
+        direction === 'prev'
+            ? newDate.setMonth(newDate.getMonth() - 1)
+            : newDate.setMonth(newDate.getMonth() + 1);
         setCurrentDate(newDate);
     };
 
@@ -105,10 +80,25 @@ const CalendarWrapper: FC = () => {
                     <header className='flex h-16 shrink-0 items-center gap-2 border-b px-4 lg:px-6'>
                         <SidebarTrigger className='-ml-1' />
                         <div className='flex-1' />
-                        <Button size='sm' className='ml-auto'>
-                            <Plus className='mr-2 h-4 w-4' />
-                            <span className='hidden sm:inline'>New Event</span>
-                        </Button>
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button size='sm' className='ml-auto'>
+                                    <Plus className='mr-2 h-4 w-4' />
+                                    <span className='hidden sm:inline'>
+                                        New Event
+                                    </span>
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className='sm:max-w-md'>
+                                <DialogHeader>
+                                    <DialogTitle>Create New Event</DialogTitle>
+                                    <DialogDescription>
+                                        Fill out the form to create a meeting.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <NewEventForm />
+                            </DialogContent>
+                        </Dialog>
                     </header>
 
                     <div className='flex-1 space-y-4 p-4 lg:p-6'>
@@ -177,61 +167,40 @@ const CalendarWrapper: FC = () => {
                                         <CardTitle>Upcoming Events</CardTitle>
                                     </CardHeader>
                                     <CardContent className='space-y-4'>
-                                        {upcomingEvents.map((event) => (
-                                            <div
-                                                key={event.id}
-                                                className='flex flex-col gap-2 rounded-lg border p-3'
-                                            >
-                                                <div className='flex items-start justify-between gap-2'>
-                                                    <h4 className='leading-tight font-medium'>
-                                                        {event.title}
-                                                    </h4>
-                                                    <Badge
-                                                        className={getEventTypeColor(
-                                                            event.type
-                                                        )}
-                                                        variant='secondary'
-                                                    >
-                                                        {event.type}
-                                                    </Badge>
+                                        {isLoading ? (
+                                            <p className='text-muted-foreground text-sm'>
+                                                Loading events...
+                                            </p>
+                                        ) : meetings.length === 0 ? (
+                                            <p className='text-muted-foreground text-sm'>
+                                                No events
+                                            </p>
+                                        ) : (
+                                            meetings.map((event: any) => (
+                                                <div
+                                                    key={event.id}
+                                                    className='flex flex-col gap-2 rounded-lg border p-3'
+                                                >
+                                                    <div className='flex items-start justify-between gap-2'>
+                                                        <h4 className='leading-tight font-medium'>
+                                                            {event.name}
+                                                        </h4>
+                                                        <Badge
+                                                            className={getEventTypeColor(
+                                                                event.type
+                                                            )}
+                                                            variant='secondary'
+                                                        >
+                                                            {event.type}
+                                                        </Badge>
+                                                    </div>
+                                                    <p className='text-muted-foreground text-sm'>
+                                                        {event.from}–{event.to}{' '}
+                                                        • {event.start_date}
+                                                    </p>
                                                 </div>
-                                                <p className='text-muted-foreground text-sm'>
-                                                    {event.time} • {event.date}
-                                                </p>
-                                            </div>
-                                        ))}
-                                    </CardContent>
-                                </Card>
-
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>Quick Stats</CardTitle>
-                                    </CardHeader>
-                                    <CardContent className='space-y-4'>
-                                        <div className='flex justify-between'>
-                                            <span className='text-muted-foreground text-sm'>
-                                                Events this month
-                                            </span>
-                                            <span className='font-medium'>
-                                                12
-                                            </span>
-                                        </div>
-                                        <div className='flex justify-between'>
-                                            <span className='text-muted-foreground text-sm'>
-                                                Meetings today
-                                            </span>
-                                            <span className='font-medium'>
-                                                3
-                                            </span>
-                                        </div>
-                                        <div className='flex justify-between'>
-                                            <span className='text-muted-foreground text-sm'>
-                                                Upcoming deadlines
-                                            </span>
-                                            <span className='font-medium'>
-                                                2
-                                            </span>
-                                        </div>
+                                            ))
+                                        )}
                                     </CardContent>
                                 </Card>
                             </div>
@@ -240,6 +209,104 @@ const CalendarWrapper: FC = () => {
                 </SidebarInset>
             </div>
         </SidebarProvider>
+    );
+};
+
+const NewEventForm: FC = () => {
+    const [form, setForm] = useState({
+        name: '',
+        description: '',
+        start_date: '',
+        from: '',
+        to: '',
+        type: '',
+    });
+
+    const createMeetingMutation = useCreateMeeting();
+
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        createMeetingMutation.mutate(form);
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className='grid gap-4'>
+            <div className='grid gap-2'>
+                <Label htmlFor='name'>Title</Label>
+                <Input
+                    name='name'
+                    value={form.name}
+                    onChange={handleChange}
+                    required
+                />
+            </div>
+            <div className='grid gap-2'>
+                <Label htmlFor='description'>Description</Label>
+                <Textarea
+                    name='description'
+                    value={form.description}
+                    onChange={handleChange}
+                />
+            </div>
+            <div className='grid grid-cols-2 gap-2'>
+                <div className='grid gap-2'>
+                    <Label htmlFor='start_date'>Date</Label>
+                    <Input
+                        type='date'
+                        name='start_date'
+                        value={form.start_date}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+                <div className='grid gap-2'>
+                    <Label htmlFor='type'>Type</Label>
+                    <Input
+                        name='type'
+                        value={form.type}
+                        onChange={handleChange}
+                        placeholder='e.g., meeting'
+                        required
+                    />
+                </div>
+            </div>
+            <div className='grid grid-cols-2 gap-2'>
+                <div className='grid gap-2'>
+                    <Label htmlFor='from'>From</Label>
+                    <Input
+                        type='time'
+                        name='from'
+                        value={form.from}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+                <div className='grid gap-2'>
+                    <Label htmlFor='to'>To</Label>
+                    <Input
+                        type='time'
+                        name='to'
+                        value={form.to}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+            </div>
+            <DialogFooter>
+                <Button
+                    type='submit'
+                    disabled={createMeetingMutation.isPending}
+                >
+                    {createMeetingMutation.isPending ? 'Creating...' : 'Create'}
+                </Button>
+            </DialogFooter>
+        </form>
     );
 };
 
