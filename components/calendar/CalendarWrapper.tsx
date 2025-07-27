@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useState } from 'react';
+import { FC, useState, unstable_ViewTransition as ViewTransition } from 'react';
 import {
     SidebarProvider,
     SidebarInset,
@@ -73,142 +73,144 @@ const CalendarWrapper: FC = () => {
     };
 
     return (
-        <SidebarProvider>
-            <div className='flex min-h-screen w-full'>
-                <DashboardSidebar />
-                <SidebarInset className='flex-1'>
-                    <header className='flex h-16 shrink-0 items-center gap-2 border-b px-4 lg:px-6'>
-                        <SidebarTrigger className='-ml-1' />
-                        <div className='flex-1' />
-                        <Dialog>
-                            <DialogTrigger asChild>
-                                <Button size='sm' className='ml-auto'>
-                                    <Plus className='mr-2 h-4 w-4' />
-                                    <span className='hidden sm:inline'>
-                                        New Event
-                                    </span>
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent className='sm:max-w-md'>
-                                <DialogHeader>
-                                    <DialogTitle>Create New Event</DialogTitle>
-                                    <DialogDescription>
-                                        Fill out the form to create a meeting.
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <NewEventForm />
-                            </DialogContent>
-                        </Dialog>
-                    </header>
+        <ViewTransition enter={"slide-in"}>
+            <SidebarProvider>
+                <div className='flex min-h-screen w-full'>
+                    <DashboardSidebar />
+                    <SidebarInset className='flex-1'>
+                        <header className='flex h-16 shrink-0 items-center gap-2 border-b px-4 lg:px-6'>
+                            <SidebarTrigger className='-ml-1' />
+                            <div className='flex-1' />
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Button size='sm' className='ml-auto'>
+                                        <Plus className='mr-2 h-4 w-4' />
+                                        <span className='hidden sm:inline'>
+                                            New Event
+                                        </span>
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent className='sm:max-w-md'>
+                                    <DialogHeader>
+                                        <DialogTitle>Create New Event</DialogTitle>
+                                        <DialogDescription>
+                                            Fill out the form to create a meeting.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <NewEventForm />
+                                </DialogContent>
+                            </Dialog>
+                        </header>
 
-                    <div className='flex-1 space-y-4 p-4 lg:p-6'>
-                        <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
-                            <div>
-                                <h1 className='text-foreground text-2xl font-bold sm:text-3xl'>
-                                    Calendar
-                                </h1>
-                                <p className='text-muted-foreground'>
-                                    Schedule and manage your events
-                                </p>
+                        <div className='flex-1 space-y-4 p-4 lg:p-6'>
+                            <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
+                                <div>
+                                    <h1 className='text-foreground text-2xl font-bold sm:text-3xl'>
+                                        Calendar
+                                    </h1>
+                                    <p className='text-muted-foreground'>
+                                        Schedule and manage your events
+                                    </p>
+                                </div>
                             </div>
-                        </div>
 
-                        <div className='grid grid-cols-1 gap-4 lg:gap-6 xl:grid-cols-3'>
-                            <div className='xl:col-span-2'>
-                                <Card>
-                                    <CardHeader>
-                                        <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
-                                            <CardTitle className='text-xl'>
-                                                {
-                                                    monthNames[
+                            <div className='grid grid-cols-1 gap-4 lg:gap-6 xl:grid-cols-3'>
+                                <div className='xl:col-span-2'>
+                                    <Card>
+                                        <CardHeader>
+                                            <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
+                                                <CardTitle className='text-xl'>
+                                                    {
+                                                        monthNames[
                                                         currentDate.getMonth()
-                                                    ]
-                                                }{' '}
-                                                {currentDate.getFullYear()}
-                                            </CardTitle>
-                                            <div className='flex space-x-2'>
-                                                <Button
-                                                    variant='outline'
-                                                    size='sm'
-                                                    onClick={() =>
-                                                        navigateMonth('prev')
-                                                    }
-                                                >
-                                                    <ChevronLeft className='h-4 w-4' />
-                                                </Button>
-                                                <Button
-                                                    variant='outline'
-                                                    size='sm'
-                                                    onClick={() =>
-                                                        navigateMonth('next')
-                                                    }
-                                                >
-                                                    <ChevronRight className='h-4 w-4' />
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <CalendarComponent
-                                            mode='single'
-                                            selected={date}
-                                            onSelect={setDate}
-                                            month={currentDate}
-                                            onMonthChange={setCurrentDate}
-                                            className='w-full [&_table]:w-full [&_td]:p-1 [&_th]:p-1'
-                                        />
-                                    </CardContent>
-                                </Card>
-                            </div>
-
-                            <div className='space-y-4 lg:space-y-6'>
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>Upcoming Events</CardTitle>
-                                    </CardHeader>
-                                    <CardContent className='space-y-4'>
-                                        {isLoading ? (
-                                            <p className='text-muted-foreground text-sm'>
-                                                Loading events...
-                                            </p>
-                                        ) : meetings.length === 0 ? (
-                                            <p className='text-muted-foreground text-sm'>
-                                                No events
-                                            </p>
-                                        ) : (
-                                            meetings.map((event: any) => (
-                                                <div
-                                                    key={event.id}
-                                                    className='flex flex-col gap-2 rounded-lg border p-3'
-                                                >
-                                                    <div className='flex items-start justify-between gap-2'>
-                                                        <h4 className='leading-tight font-medium'>
-                                                            {event.name}
-                                                        </h4>
-                                                        <Badge
-                                                            className={getEventTypeColor(
-                                                                event.type
-                                                            )}
-                                                            variant='secondary'
-                                                        >
-                                                            {event.type}
-                                                        </Badge>
-                                                    </div>
-                                                    <p className='text-muted-foreground text-sm'>
-                                                        {event.from}–{event.to}{' '}
-                                                        • {event.start_date}
-                                                    </p>
+                                                        ]
+                                                    }{' '}
+                                                    {currentDate.getFullYear()}
+                                                </CardTitle>
+                                                <div className='flex space-x-2'>
+                                                    <Button
+                                                        variant='outline'
+                                                        size='sm'
+                                                        onClick={() =>
+                                                            navigateMonth('prev')
+                                                        }
+                                                    >
+                                                        <ChevronLeft className='h-4 w-4' />
+                                                    </Button>
+                                                    <Button
+                                                        variant='outline'
+                                                        size='sm'
+                                                        onClick={() =>
+                                                            navigateMonth('next')
+                                                        }
+                                                    >
+                                                        <ChevronRight className='h-4 w-4' />
+                                                    </Button>
                                                 </div>
-                                            ))
-                                        )}
-                                    </CardContent>
-                                </Card>
+                                            </div>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <CalendarComponent
+                                                mode='single'
+                                                selected={date}
+                                                onSelect={setDate}
+                                                month={currentDate}
+                                                onMonthChange={setCurrentDate}
+                                                className='w-full [&_table]:w-full [&_td]:p-1 [&_th]:p-1'
+                                            />
+                                        </CardContent>
+                                    </Card>
+                                </div>
+
+                                <div className='space-y-4 lg:space-y-6'>
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle>Upcoming Events</CardTitle>
+                                        </CardHeader>
+                                        <CardContent className='space-y-4'>
+                                            {isLoading ? (
+                                                <p className='text-muted-foreground text-sm'>
+                                                    Loading events...
+                                                </p>
+                                            ) : meetings.length === 0 ? (
+                                                <p className='text-muted-foreground text-sm'>
+                                                    No events
+                                                </p>
+                                            ) : (
+                                                meetings.map((event: any) => (
+                                                    <div
+                                                        key={event.id}
+                                                        className='flex flex-col gap-2 rounded-lg border p-3'
+                                                    >
+                                                        <div className='flex items-start justify-between gap-2'>
+                                                            <h4 className='leading-tight font-medium'>
+                                                                {event.name}
+                                                            </h4>
+                                                            <Badge
+                                                                className={getEventTypeColor(
+                                                                    event.type
+                                                                )}
+                                                                variant='secondary'
+                                                            >
+                                                                {event.type}
+                                                            </Badge>
+                                                        </div>
+                                                        <p className='text-muted-foreground text-sm'>
+                                                            {event.from}–{event.to}{' '}
+                                                            • {event.start_date}
+                                                        </p>
+                                                    </div>
+                                                ))
+                                            )}
+                                        </CardContent>
+                                    </Card>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </SidebarInset>
-            </div>
-        </SidebarProvider>
+                    </SidebarInset>
+                </div>
+            </SidebarProvider>
+        </ViewTransition>
     );
 };
 
