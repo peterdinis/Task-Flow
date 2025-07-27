@@ -36,7 +36,7 @@ export async function createMeeting(input: unknown) {
     return data;
 }
 
-export async function getBoards(input: unknown) {
+export async function getMeetings(input: unknown) {
     const parsed = getAllMeetingsSchema.safeParse(input);
     if (!parsed.success) {
         throw new Error('Invalid input');
