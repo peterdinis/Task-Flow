@@ -1,4 +1,6 @@
-import { FC } from 'react';
+'use client';
+
+import { FC, unstable_ViewTransition as ViewTransition } from 'react';
 import {
     SidebarProvider,
     SidebarInset,
@@ -151,255 +153,269 @@ const TeamWrapper: FC = () => {
     };
 
     return (
-        <SidebarProvider>
-            <div className='flex min-h-screen w-full'>
-                <DashboardSidebar />
-                <SidebarInset className='flex-1'>
-                    <header className='flex h-16 shrink-0 items-center gap-2 border-b px-4 lg:px-6'>
-                        <SidebarTrigger className='-ml-1' />
-                        <div className='flex-1' />
-                        <Button size='sm' className='ml-auto'>
-                            <Plus className='mr-2 h-4 w-4' />
-                            <span className='hidden sm:inline'>Add Member</span>
-                        </Button>
-                    </header>
+        <ViewTransition enter={'slide-in'}>
+            <SidebarProvider>
+                <div className='flex min-h-screen w-full'>
+                    <DashboardSidebar />
+                    <SidebarInset className='flex-1'>
+                        <header className='flex h-16 shrink-0 items-center gap-2 border-b px-4 lg:px-6'>
+                            <SidebarTrigger className='-ml-1' />
+                            <div className='flex-1' />
+                            <Button size='sm' className='ml-auto'>
+                                <Plus className='mr-2 h-4 w-4' />
+                                <span className='hidden sm:inline'>
+                                    Add Member
+                                </span>
+                            </Button>
+                        </header>
 
-                    <div className='flex-1 space-y-4 p-4 lg:p-6'>
-                        <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
-                            <div>
-                                <h1 className='text-foreground text-2xl font-bold sm:text-3xl'>
-                                    Team
-                                </h1>
-                                <p className='text-muted-foreground'>
-                                    Manage your team members and their roles
-                                </p>
+                        <div className='flex-1 space-y-4 p-4 lg:p-6'>
+                            <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
+                                <div>
+                                    <h1 className='text-foreground text-2xl font-bold sm:text-3xl'>
+                                        Team
+                                    </h1>
+                                    <p className='text-muted-foreground'>
+                                        Manage your team members and their roles
+                                    </p>
+                                </div>
                             </div>
-                        </div>
 
-                        {/* Search and Filter */}
-                        <div className='flex flex-col gap-4 sm:flex-row sm:items-center'>
-                            <div className='relative max-w-sm flex-1'>
-                                <Search className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform' />
-                                <Input
-                                    placeholder='Search team members...'
-                                    className='pl-9'
-                                />
+                            {/* Search and Filter */}
+                            <div className='flex flex-col gap-4 sm:flex-row sm:items-center'>
+                                <div className='relative max-w-sm flex-1'>
+                                    <Search className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform' />
+                                    <Input
+                                        placeholder='Search team members...'
+                                        className='pl-9'
+                                    />
+                                </div>
+                                <div className='flex gap-2'>
+                                    <Button variant='outline' size='sm'>
+                                        <Filter className='mr-2 h-4 w-4' />
+                                        Filter
+                                    </Button>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant='outline' size='sm'>
+                                                Department
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent>
+                                            <DropdownMenuItem>
+                                                All Departments
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem>
+                                                Engineering
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem>
+                                                Design
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem>
+                                                Management
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem>
+                                                Marketing
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </div>
                             </div>
-                            <div className='flex gap-2'>
-                                <Button variant='outline' size='sm'>
-                                    <Filter className='mr-2 h-4 w-4' />
-                                    Filter
-                                </Button>
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button variant='outline' size='sm'>
-                                            Department
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent>
-                                        <DropdownMenuItem>
-                                            All Departments
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem>
-                                            Engineering
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem>
-                                            Design
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem>
-                                            Management
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem>
-                                            Marketing
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                            </div>
-                        </div>
 
-                        {/* Team Stats */}
-                        <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4'>
-                            <Card>
-                                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                                    <CardTitle className='text-sm font-medium'>
-                                        Total Members
-                                    </CardTitle>
-                                    <User className='text-muted-foreground h-4 w-4' />
-                                </CardHeader>
-                                <CardContent>
-                                    <div className='text-2xl font-bold'>16</div>
-                                    <p className='text-muted-foreground text-xs'>
-                                        +2 from last month
-                                    </p>
-                                </CardContent>
-                            </Card>
-                            <Card>
-                                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                                    <CardTitle className='text-sm font-medium'>
-                                        Online Now
-                                    </CardTitle>
-                                    <div className='h-2 w-2 rounded-full bg-green-500'></div>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className='text-2xl font-bold'>12</div>
-                                    <p className='text-muted-foreground text-xs'>
-                                        75% of team
-                                    </p>
-                                </CardContent>
-                            </Card>
-                            <Card>
-                                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                                    <CardTitle className='text-sm font-medium'>
-                                        Active Boards
-                                    </CardTitle>
-                                    <Calendar className='text-muted-foreground h-4 w-4' />
-                                </CardHeader>
-                                <CardContent>
-                                    <div className='text-2xl font-bold'>8</div>
-                                    <p className='text-muted-foreground text-xs'>
-                                        Across all teams
-                                    </p>
-                                </CardContent>
-                            </Card>
-                            <Card>
-                                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                                    <CardTitle className='text-sm font-medium'>
-                                        Departments
-                                    </CardTitle>
-                                    <MapPin className='text-muted-foreground h-4 w-4' />
-                                </CardHeader>
-                                <CardContent>
-                                    <div className='text-2xl font-bold'>4</div>
-                                    <p className='text-muted-foreground text-xs'>
-                                        Engineering, Design, etc.
-                                    </p>
-                                </CardContent>
-                            </Card>
-                        </div>
-
-                        {/* Team Members Grid */}
-                        <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6 xl:grid-cols-3'>
-                            {teamMembers.map((member) => (
-                                <Card
-                                    key={member.id}
-                                    className='transition-shadow hover:shadow-lg'
-                                >
-                                    <CardHeader className='pb-3'>
-                                        <div className='flex items-start justify-between'>
-                                            <div className='flex items-center space-x-3'>
-                                                <Avatar className='h-12 w-12'>
-                                                    <AvatarFallback className='bg-gradient-to-br from-blue-500 to-purple-500 font-medium text-white'>
-                                                        {member.avatar}
-                                                    </AvatarFallback>
-                                                </Avatar>
-                                                <div className='min-w-0'>
-                                                    <CardTitle className='truncate text-lg'>
-                                                        {member.name}
-                                                    </CardTitle>
-                                                    <CardDescription className='truncate'>
-                                                        {member.role}
-                                                    </CardDescription>
-                                                </div>
-                                            </div>
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button
-                                                        variant='ghost'
-                                                        size='sm'
-                                                    >
-                                                        <MoreHorizontal className='h-4 w-4' />
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent>
-                                                    <DropdownMenuItem>
-                                                        View Profile
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem>
-                                                        Edit Member
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem>
-                                                        Send Message
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem className='text-destructive'>
-                                                        Remove
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
-                                        </div>
+                            {/* Team Stats */}
+                            <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4'>
+                                <Card>
+                                    <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                                        <CardTitle className='text-sm font-medium'>
+                                            Total Members
+                                        </CardTitle>
+                                        <User className='text-muted-foreground h-4 w-4' />
                                     </CardHeader>
-                                    <CardContent className='space-y-4'>
-                                        <div className='flex flex-wrap gap-2'>
-                                            <Badge
-                                                className={getStatusColor(
-                                                    member.status
-                                                )}
-                                                variant='secondary'
-                                            >
-                                                {member.status}
-                                            </Badge>
-                                            <Badge
-                                                className={getDepartmentColor(
-                                                    member.department
-                                                )}
-                                                variant='secondary'
-                                            >
-                                                {member.department}
-                                            </Badge>
+                                    <CardContent>
+                                        <div className='text-2xl font-bold'>
+                                            16
                                         </div>
-
-                                        <div className='space-y-2 text-sm'>
-                                            <div className='text-muted-foreground flex items-center gap-2'>
-                                                <Mail className='h-3 w-3 shrink-0' />
-                                                <span className='truncate'>
-                                                    {member.email}
-                                                </span>
-                                            </div>
-                                            <div className='text-muted-foreground flex items-center gap-2'>
-                                                <Phone className='h-3 w-3 shrink-0' />
-                                                <span>{member.phone}</span>
-                                            </div>
-                                            <div className='text-muted-foreground flex items-center gap-2'>
-                                                <MapPin className='h-3 w-3 shrink-0' />
-                                                <span className='truncate'>
-                                                    {member.location}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        <div className='grid grid-cols-3 gap-4 border-t pt-3'>
-                                            <div className='text-center'>
-                                                <div className='text-lg font-semibold'>
-                                                    {member.projectsCount}
-                                                </div>
-                                                <div className='text-muted-foreground text-xs'>
-                                                    Boards
-                                                </div>
-                                            </div>
-                                            <div className='text-center'>
-                                                <div className='text-lg font-semibold'>
-                                                    {member.tasksCompleted}
-                                                </div>
-                                                <div className='text-muted-foreground text-xs'>
-                                                    Tasks
-                                                </div>
-                                            </div>
-                                            <div className='text-center'>
-                                                <div className='text-lg font-semibold'>
-                                                    {member.joinDate}
-                                                </div>
-                                                <div className='text-muted-foreground text-xs'>
-                                                    Joined
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <p className='text-muted-foreground text-xs'>
+                                            +2 from last month
+                                        </p>
                                     </CardContent>
                                 </Card>
-                            ))}
+                                <Card>
+                                    <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                                        <CardTitle className='text-sm font-medium'>
+                                            Online Now
+                                        </CardTitle>
+                                        <div className='h-2 w-2 rounded-full bg-green-500'></div>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className='text-2xl font-bold'>
+                                            12
+                                        </div>
+                                        <p className='text-muted-foreground text-xs'>
+                                            75% of team
+                                        </p>
+                                    </CardContent>
+                                </Card>
+                                <Card>
+                                    <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                                        <CardTitle className='text-sm font-medium'>
+                                            Active Boards
+                                        </CardTitle>
+                                        <Calendar className='text-muted-foreground h-4 w-4' />
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className='text-2xl font-bold'>
+                                            8
+                                        </div>
+                                        <p className='text-muted-foreground text-xs'>
+                                            Across all teams
+                                        </p>
+                                    </CardContent>
+                                </Card>
+                                <Card>
+                                    <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                                        <CardTitle className='text-sm font-medium'>
+                                            Departments
+                                        </CardTitle>
+                                        <MapPin className='text-muted-foreground h-4 w-4' />
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className='text-2xl font-bold'>
+                                            4
+                                        </div>
+                                        <p className='text-muted-foreground text-xs'>
+                                            Engineering, Design, etc.
+                                        </p>
+                                    </CardContent>
+                                </Card>
+                            </div>
+
+                            {/* Team Members Grid */}
+                            <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6 xl:grid-cols-3'>
+                                {teamMembers.map((member) => (
+                                    <Card
+                                        key={member.id}
+                                        className='transition-shadow hover:shadow-lg'
+                                    >
+                                        <CardHeader className='pb-3'>
+                                            <div className='flex items-start justify-between'>
+                                                <div className='flex items-center space-x-3'>
+                                                    <Avatar className='h-12 w-12'>
+                                                        <AvatarFallback className='bg-gradient-to-br from-blue-500 to-purple-500 font-medium text-white'>
+                                                            {member.avatar}
+                                                        </AvatarFallback>
+                                                    </Avatar>
+                                                    <div className='min-w-0'>
+                                                        <CardTitle className='truncate text-lg'>
+                                                            {member.name}
+                                                        </CardTitle>
+                                                        <CardDescription className='truncate'>
+                                                            {member.role}
+                                                        </CardDescription>
+                                                    </div>
+                                                </div>
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger
+                                                        asChild
+                                                    >
+                                                        <Button
+                                                            variant='ghost'
+                                                            size='sm'
+                                                        >
+                                                            <MoreHorizontal className='h-4 w-4' />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent>
+                                                        <DropdownMenuItem>
+                                                            View Profile
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem>
+                                                            Edit Member
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem>
+                                                            Send Message
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem className='text-destructive'>
+                                                            Remove
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            </div>
+                                        </CardHeader>
+                                        <CardContent className='space-y-4'>
+                                            <div className='flex flex-wrap gap-2'>
+                                                <Badge
+                                                    className={getStatusColor(
+                                                        member.status
+                                                    )}
+                                                    variant='secondary'
+                                                >
+                                                    {member.status}
+                                                </Badge>
+                                                <Badge
+                                                    className={getDepartmentColor(
+                                                        member.department
+                                                    )}
+                                                    variant='secondary'
+                                                >
+                                                    {member.department}
+                                                </Badge>
+                                            </div>
+
+                                            <div className='space-y-2 text-sm'>
+                                                <div className='text-muted-foreground flex items-center gap-2'>
+                                                    <Mail className='h-3 w-3 shrink-0' />
+                                                    <span className='truncate'>
+                                                        {member.email}
+                                                    </span>
+                                                </div>
+                                                <div className='text-muted-foreground flex items-center gap-2'>
+                                                    <Phone className='h-3 w-3 shrink-0' />
+                                                    <span>{member.phone}</span>
+                                                </div>
+                                                <div className='text-muted-foreground flex items-center gap-2'>
+                                                    <MapPin className='h-3 w-3 shrink-0' />
+                                                    <span className='truncate'>
+                                                        {member.location}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div className='grid grid-cols-3 gap-4 border-t pt-3'>
+                                                <div className='text-center'>
+                                                    <div className='text-lg font-semibold'>
+                                                        {member.projectsCount}
+                                                    </div>
+                                                    <div className='text-muted-foreground text-xs'>
+                                                        Boards
+                                                    </div>
+                                                </div>
+                                                <div className='text-center'>
+                                                    <div className='text-lg font-semibold'>
+                                                        {member.tasksCompleted}
+                                                    </div>
+                                                    <div className='text-muted-foreground text-xs'>
+                                                        Tasks
+                                                    </div>
+                                                </div>
+                                                <div className='text-center'>
+                                                    <div className='text-lg font-semibold'>
+                                                        {member.joinDate}
+                                                    </div>
+                                                    <div className='text-muted-foreground text-xs'>
+                                                        Joined
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                </SidebarInset>
-            </div>
-        </SidebarProvider>
+                    </SidebarInset>
+                </div>
+            </SidebarProvider>
+        </ViewTransition>
     );
 };
 
