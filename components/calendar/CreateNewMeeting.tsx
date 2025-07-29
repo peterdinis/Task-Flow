@@ -10,8 +10,10 @@ import { useCreateMeeting } from "@/hooks/meetings/useCreateMeeting";
 import { useToast } from "@/hooks/shared/use-toast";
 import { Loader2 } from "lucide-react";
 import { MeetingFormData, meetingSchema } from "@/schemas/meetingSchema";
+import { useUser } from "@clerk/nextjs";
 
 const CreateNewMeeting: FC<{ onClose?: () => void }> = ({ onClose }) => {
+    const {user} = useUser()
     const [form, setForm] = useState<MeetingFormData>({
         name: "",
         description: "",
@@ -19,6 +21,7 @@ const CreateNewMeeting: FC<{ onClose?: () => void }> = ({ onClose }) => {
         from: "",
         to: "",
         type: "",
+        user_id: user?.id!
     });
 
     const { toast } = useToast()

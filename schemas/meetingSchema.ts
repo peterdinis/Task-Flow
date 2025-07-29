@@ -18,11 +18,12 @@ export const getAllMeetingsSchema = z.object({
 
 export const meetingSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  description: z.string().optional(),
+  description: z.string(),
   start_date: z.string().min(1, "Date is required"),
   from: z.string().min(1, "Start time is required"),
   to: z.string().min(1, "End time is required"),
   type: z.string().min(1, "Type is required"),
+  user_id: z.string().min(1)
 });
 
 export type MeetingFormData = z.infer<typeof meetingSchema>;
