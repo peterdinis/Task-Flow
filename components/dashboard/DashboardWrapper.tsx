@@ -31,68 +31,13 @@ import { FC, unstable_ViewTransition as ViewTransition } from 'react';
 import { ModeToggle } from '../shared/ModeToggle';
 import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
+import { useBoards } from '@/hooks/boards/useBoards';
 
 const DashboardWrapper: FC = () => {
     const { user } = useUser();
+    const {data} = useBoards(1, true)
 
-    const recentProjects = [
-        {
-            id: 1,
-            name: 'Website Redesign',
-            progress: 75,
-            dueDate: '2024-02-15',
-            status: 'In Progress',
-            team: 4,
-        },
-        {
-            id: 2,
-            name: 'Mobile App',
-            progress: 45,
-            dueDate: '2024-03-20',
-            status: 'Planning',
-            team: 3,
-        },
-        {
-            id: 3,
-            name: 'Marketing Campaign',
-            progress: 90,
-            dueDate: '2024-01-30',
-            status: 'Review',
-            team: 6,
-        },
-        {
-            id: 4,
-            name: 'Marketing Campaign',
-            progress: 90,
-            dueDate: '2024-01-30',
-            status: 'Review',
-            team: 6,
-        },
-        {
-            id: 5,
-            name: 'Marketing Campaign',
-            progress: 90,
-            dueDate: '2024-01-30',
-            status: 'Review',
-            team: 6,
-        },
-        {
-            id: 6,
-            name: 'Marketing Campaign',
-            progress: 90,
-            dueDate: '2024-01-30',
-            status: 'Review',
-            team: 6,
-        },
-        {
-            id: 7,
-            name: 'Marketing Campaign',
-            progress: 90,
-            dueDate: '2024-01-30',
-            status: 'Review',
-            team: 6,
-        },
-    ];
+    const boardsData = data?.boards
 
     const upcomingTasks = [
         {
@@ -286,7 +231,7 @@ const DashboardWrapper: FC = () => {
                                         </div>
                                     </CardHeader>
                                     <CardContent className='space-y-4'>
-                                        {recentProjects.map((project) => (
+                                        {boardsData && boardsData!.map((project) => (
                                             <div
                                                 key={project.id}
                                                 className='bg-card flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-center'
@@ -294,12 +239,12 @@ const DashboardWrapper: FC = () => {
                                                 <div className='min-w-0 flex-1'>
                                                     <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
                                                         <h4 className='truncate font-medium'>
-                                                            {project.name}
+                                                            {project.title}
                                                         </h4>
                                                         <div className='flex items-center gap-2'>
                                                             <Badge
                                                                 className={getStatusColor(
-                                                                    project.status
+                                                                    project.status!
                                                                 )}
                                                             >
                                                                 {project.status}
