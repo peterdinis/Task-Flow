@@ -13,7 +13,8 @@ export async function createMeeting(input: unknown) {
         throw new Error('Invalid input');
     }
 
-    const { name, description, start_date, from, to, type, user_id } = parsed.data;
+    const { name, description, start_date, from, to, type, user_id } =
+        parsed.data;
 
     const { userId } = await auth();
     if (!userId) {
@@ -31,7 +32,7 @@ export async function createMeeting(input: unknown) {
             from,
             to,
             type,
-            user_id
+            user_id,
         })
         .select()
         .single();

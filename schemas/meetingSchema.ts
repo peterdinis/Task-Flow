@@ -7,7 +7,7 @@ export const createNewMeetingSchema = z.object({
     from: z.date(),
     to: z.date(),
     type: z.string(),
-    user_id: z.string()
+    user_id: z.string(),
 });
 
 export const getAllMeetingsSchema = z.object({

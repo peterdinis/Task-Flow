@@ -73,7 +73,7 @@ const CalendarWrapper: FC = () => {
     };
 
     return (
-        <ViewTransition enter={"slide-in"}>
+        <ViewTransition enter={'slide-in'}>
             <SidebarProvider>
                 <div className='flex min-h-screen w-full'>
                     <DashboardSidebar />
@@ -92,9 +92,12 @@ const CalendarWrapper: FC = () => {
                                 </DialogTrigger>
                                 <DialogContent className='sm:max-w-md'>
                                     <DialogHeader>
-                                        <DialogTitle>Create New Event</DialogTitle>
+                                        <DialogTitle>
+                                            Create New Event
+                                        </DialogTitle>
                                         <DialogDescription>
-                                            Fill out the form to create a meeting.
+                                            Fill out the form to create a
+                                            meeting.
                                         </DialogDescription>
                                     </DialogHeader>
                                     <NewEventForm />
@@ -122,7 +125,7 @@ const CalendarWrapper: FC = () => {
                                                 <CardTitle className='text-xl'>
                                                     {
                                                         monthNames[
-                                                        currentDate.getMonth()
+                                                            currentDate.getMonth()
                                                         ]
                                                     }{' '}
                                                     {currentDate.getFullYear()}
@@ -132,7 +135,9 @@ const CalendarWrapper: FC = () => {
                                                         variant='outline'
                                                         size='sm'
                                                         onClick={() =>
-                                                            navigateMonth('prev')
+                                                            navigateMonth(
+                                                                'prev'
+                                                            )
                                                         }
                                                     >
                                                         <ChevronLeft className='h-4 w-4' />
@@ -141,7 +146,9 @@ const CalendarWrapper: FC = () => {
                                                         variant='outline'
                                                         size='sm'
                                                         onClick={() =>
-                                                            navigateMonth('next')
+                                                            navigateMonth(
+                                                                'next'
+                                                            )
                                                         }
                                                     >
                                                         <ChevronRight className='h-4 w-4' />
@@ -165,7 +172,9 @@ const CalendarWrapper: FC = () => {
                                 <div className='space-y-4 lg:space-y-6'>
                                     <Card>
                                         <CardHeader>
-                                            <CardTitle>Upcoming Events</CardTitle>
+                                            <CardTitle>
+                                                Upcoming Events
+                                            </CardTitle>
                                         </CardHeader>
                                         <CardContent className='space-y-4'>
                                             {isLoading ? (
@@ -196,8 +205,9 @@ const CalendarWrapper: FC = () => {
                                                             </Badge>
                                                         </div>
                                                         <p className='text-muted-foreground text-sm'>
-                                                            {event.from}–{event.to}{' '}
-                                                            • {event.start_date}
+                                                            {event.from}–
+                                                            {event.to} •{' '}
+                                                            {event.start_date}
                                                         </p>
                                                     </div>
                                                 ))

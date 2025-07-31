@@ -31,7 +31,7 @@ import { useBoards } from '@/hooks/boards/useBoards';
 export const DashboardSidebar: FC = () => {
     const { user } = useUser();
     const { signOut } = useClerk();
-    const {data} = useBoards(1, true)
+    const { data } = useBoards(1, true);
 
     const navigation = [
         { title: 'Dashboard', url: '/dashboard', icon: Home },
@@ -48,7 +48,7 @@ export const DashboardSidebar: FC = () => {
         { id: 4, name: 'Sarah Wilson', initials: 'SW' },
     ];
 
-    const boardsData = data?.boards
+    const boardsData = data?.boards;
 
     return (
         <Sidebar className='border-r border-gray-200'>
@@ -90,23 +90,24 @@ export const DashboardSidebar: FC = () => {
                     </SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            {boardsData && boardsData.map((board) => (
-                                <SidebarMenuItem key={board.id}>
-                                    <SidebarMenuButton asChild>
-                                        <Link
-                                            href={`/board/${board.id}`}
-                                            className='flex items-center space-x-3 rounded-md px-3 py-2 transition-colors hover:bg-gray-100'
-                                        >
-                                            <div
-                                                className={`h-3 w-3 rounded-full ${board.color}`}
-                                            />
-                                            <span className='text-sm'>
-                                                {board.title}
-                                            </span>
-                                        </Link>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            ))}
+                            {boardsData &&
+                                boardsData.map((board) => (
+                                    <SidebarMenuItem key={board.id}>
+                                        <SidebarMenuButton asChild>
+                                            <Link
+                                                href={`/board/${board.id}`}
+                                                className='flex items-center space-x-3 rounded-md px-3 py-2 transition-colors hover:bg-gray-100'
+                                            >
+                                                <div
+                                                    className={`h-3 w-3 rounded-full ${board.color}`}
+                                                />
+                                                <span className='text-sm'>
+                                                    {board.title}
+                                                </span>
+                                            </Link>
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                ))}
                         </SidebarMenu>
                         <div className='mt-2 px-3'>
                             <Button

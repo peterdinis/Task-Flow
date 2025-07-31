@@ -93,7 +93,7 @@ const BoardsWrapper: FC = () => {
     };
 
     return (
-        <ViewTransition enter={"slide-in"}>
+        <ViewTransition enter={'slide-in'}>
             <SidebarProvider>
                 <div className='flex min-h-screen w-full'>
                     <DashboardSidebar />
@@ -112,7 +112,9 @@ const BoardsWrapper: FC = () => {
                                 </DialogTrigger>
                                 <DialogContent className='sm:max-w-md'>
                                     <DialogHeader>
-                                        <DialogTitle>Create New Board</DialogTitle>
+                                        <DialogTitle>
+                                            Create New Board
+                                        </DialogTitle>
                                     </DialogHeader>
                                     <form
                                         onSubmit={handleSubmit(onSubmit)}
@@ -239,7 +241,9 @@ const BoardsWrapper: FC = () => {
                                                     </CardTitle>
                                                 </div>
                                                 <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
+                                                    <DropdownMenuTrigger
+                                                        asChild
+                                                    >
                                                         <Button
                                                             variant='ghost'
                                                             size='sm'
@@ -271,7 +275,7 @@ const BoardsWrapper: FC = () => {
                                                     <Badge
                                                         className={getStatusColor(
                                                             project.status ||
-                                                            'Planning'
+                                                                'Planning'
                                                         )}
                                                     >
                                                         {project.status ||
@@ -297,11 +301,11 @@ const BoardsWrapper: FC = () => {
                                                         <span className='truncate'>
                                                             {project.created_at
                                                                 ? format(
-                                                                    new Date(
-                                                                        project.created_at
-                                                                    ),
-                                                                    'd. MMMM yyyy'
-                                                                )
+                                                                      new Date(
+                                                                          project.created_at
+                                                                      ),
+                                                                      'd. MMMM yyyy'
+                                                                  )
                                                                 : '-'}
                                                         </span>
                                                     </div>
