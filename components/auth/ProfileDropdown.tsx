@@ -124,7 +124,8 @@ const ProfileDropdown: FC = () => {
                 trigger={
                     <button className='flex items-center rounded-lg p-2 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800'>
                         <div className='flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-sm font-semibold text-white'>
-                            {user?.firstName?.charAt(0) + user?.lastName?.charAt(0)!}
+                            {user?.firstName?.charAt(0) +
+                                user?.lastName?.charAt(0)!}
                         </div>
                     </button>
                 }

@@ -31,68 +31,13 @@ import { FC, unstable_ViewTransition as ViewTransition } from 'react';
 import { ModeToggle } from '../shared/ModeToggle';
 import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
+import { useBoards } from '@/hooks/boards/useBoards';
 
 const DashboardWrapper: FC = () => {
     const { user } = useUser();
+    const { data } = useBoards(1, true);
 
-    const recentProjects = [
-        {
-            id: 1,
-            name: 'Website Redesign',
-            progress: 75,
-            dueDate: '2024-02-15',
-            status: 'In Progress',
-            team: 4,
-        },
-        {
-            id: 2,
-            name: 'Mobile App',
-            progress: 45,
-            dueDate: '2024-03-20',
-            status: 'Planning',
-            team: 3,
-        },
-        {
-            id: 3,
-            name: 'Marketing Campaign',
-            progress: 90,
-            dueDate: '2024-01-30',
-            status: 'Review',
-            team: 6,
-        },
-        {
-            id: 4,
-            name: 'Marketing Campaign',
-            progress: 90,
-            dueDate: '2024-01-30',
-            status: 'Review',
-            team: 6,
-        },
-        {
-            id: 5,
-            name: 'Marketing Campaign',
-            progress: 90,
-            dueDate: '2024-01-30',
-            status: 'Review',
-            team: 6,
-        },
-        {
-            id: 6,
-            name: 'Marketing Campaign',
-            progress: 90,
-            dueDate: '2024-01-30',
-            status: 'Review',
-            team: 6,
-        },
-        {
-            id: 7,
-            name: 'Marketing Campaign',
-            progress: 90,
-            dueDate: '2024-01-30',
-            status: 'Review',
-            team: 6,
-        },
-    ];
+    const boardsData = data?.boards;
 
     const upcomingTasks = [
         {
@@ -200,244 +145,269 @@ const DashboardWrapper: FC = () => {
     };
 
     return (
-        <ViewTransition enter={"slide-in"}>
+        <ViewTransition enter={'slide-in'}>
             <SidebarProvider>
-            <div className='flex min-h-screen w-full'>
-                <DashboardSidebar />
-                <SidebarInset className='flex-1'>
-                    <header className='flex h-16 shrink-0 items-center gap-2 border-b px-4 lg:px-6'>
-                        <SidebarTrigger className='-ml-1' />
-                        <div className='flex-1' />
-                        <Button size='sm' className='ml-auto'>
-                            <Plus className='mr-2 h-4 w-4' />
-                            <span className='hidden sm:inline'>
-                                New Project
-                            </span>
-                        </Button>
-                        <ModeToggle />
-                    </header>
+                <div className='flex min-h-screen w-full'>
+                    <DashboardSidebar />
+                    <SidebarInset className='flex-1'>
+                        <header className='flex h-16 shrink-0 items-center gap-2 border-b px-4 lg:px-6'>
+                            <SidebarTrigger className='-ml-1' />
+                            <div className='flex-1' />
+                            <Button size='sm' className='ml-auto'>
+                                <Plus className='mr-2 h-4 w-4' />
+                                <span className='hidden sm:inline'>
+                                    New Project
+                                </span>
+                            </Button>
+                            <ModeToggle />
+                        </header>
 
-                    <div className='flex-1 space-y-4 p-4 lg:p-6'>
-                        {/* Welcome Section */}
-                        <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
-                            <div>
-                                <h1 className='text-foreground text-2xl font-bold sm:text-3xl'>
-                                    Welcome back!{' '}
-                                    {user?.firstName + user?.lastName!} 👋
-                                </h1>
-                                <p className='text-muted-foreground'>
-                                    Here&apos;s what&apos;s happening with your
-                                    projects today.
-                                </p>
+                        <div className='flex-1 space-y-4 p-4 lg:p-6'>
+                            {/* Welcome Section */}
+                            <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
+                                <div>
+                                    <h1 className='text-foreground text-2xl font-bold sm:text-3xl'>
+                                        Welcome back!{' '}
+                                        {user?.firstName + user?.lastName!} 👋
+                                    </h1>
+                                    <p className='text-muted-foreground'>
+                                        Here&apos;s what&apos;s happening with
+                                        your projects today.
+                                    </p>
+                                </div>
+                                <div className='flex flex-col gap-2 sm:flex-row'>
+                                    <Button variant='outline' size='sm'>
+                                        <Calendar className='mr-2 h-4 w-4' />
+                                        <span className='hidden sm:inline'>
+                                            <Link href='/calendar'>
+                                                Schedule
+                                            </Link>
+                                        </span>
+                                    </Button>
+                                    <Button variant='outline' size='sm'>
+                                        <Users className='mr-2 h-4 w-4' />
+                                        <span className='hidden sm:inline'>
+                                            <Link href='/team'>Team</Link>
+                                        </span>
+                                    </Button>
+                                </div>
                             </div>
-                            <div className='flex flex-col gap-2 sm:flex-row'>
-                                <Button variant='outline' size='sm'>
-                                    <Calendar className='mr-2 h-4 w-4' />
-                                    <span className='hidden sm:inline'>
-                                        <Link href='/calendar'>Schedule</Link>
-                                    </span>
-                                </Button>
-                                <Button variant='outline' size='sm'>
-                                    <Users className='mr-2 h-4 w-4' />
-                                    <span className='hidden sm:inline'>
-                                        <Link href='/team'>Team</Link>
-                                    </span>
-                                </Button>
-                            </div>
-                        </div>
 
-                        {/* Stats Grid */}
-                        <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4'>
-                            {stats.map((stat, index) => (
-                                <Card key={index}>
-                                    <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                                        <CardTitle className='text-sm font-medium'>
-                                            {stat.title}
-                                        </CardTitle>
-                                        {stat.icon}
-                                    </CardHeader>
-                                    <CardContent>
-                                        <div className='text-xl font-bold sm:text-2xl'>
-                                            {stat.value}
-                                        </div>
-                                        <p className='text-muted-foreground text-xs'>
-                                            <span className='text-green-600'>
-                                                {stat.change}
-                                            </span>{' '}
-                                            from last month
-                                        </p>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </div>
-
-                        <div className='grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-6'>
-                            {/* Recent Projects */}
-                            <div className='lg:col-span-2'>
-                                <Card>
-                                    <CardHeader>
-                                        <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
-                                            <CardTitle>Recent Boards</CardTitle>
-                                            <Button variant='outline' size='sm'>
-                                                <Link href='/boards'>
-                                                    Boards
-                                                </Link>
-                                            </Button>
-                                        </div>
-                                    </CardHeader>
-                                    <CardContent className='space-y-4'>
-                                        {recentProjects.map((project) => (
-                                            <div
-                                                key={project.id}
-                                                className='bg-card flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-center'
-                                            >
-                                                <div className='min-w-0 flex-1'>
-                                                    <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
-                                                        <h4 className='truncate font-medium'>
-                                                            {project.name}
-                                                        </h4>
-                                                        <div className='flex items-center gap-2'>
-                                                            <Badge
-                                                                className={getStatusColor(
-                                                                    project.status
-                                                                )}
-                                                            >
-                                                                {project.status}
-                                                            </Badge>
-                                                            <Button
-                                                                variant='ghost'
-                                                                size='sm'
-                                                            >
-                                                                <MoreHorizontal className='h-4 w-4' />
-                                                            </Button>
-                                                        </div>
-                                                    </div>
-                                                    <div className='mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
-                                                        <div className='text-muted-foreground flex items-center gap-4 text-sm'>
-                                                            <span className='flex items-center gap-1'>
-                                                                <Calendar className='h-3 w-3' />
-                                                                {
-                                                                    project.dueDate
-                                                                }
-                                                            </span>
-                                                            <span className='flex items-center gap-1'>
-                                                                <Users className='h-3 w-3' />
-                                                                {project.team}{' '}
-                                                                members
-                                                            </span>
-                                                        </div>
-                                                        <div className='flex min-w-0 items-center gap-2 sm:min-w-[120px]'>
-                                                            <Progress
-                                                                value={
-                                                                    project.progress
-                                                                }
-                                                                className='flex-1'
-                                                            />
-                                                            <span className='text-sm font-medium whitespace-nowrap'>
-                                                                {
-                                                                    project.progress
-                                                                }
-                                                                %
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                            {/* Stats Grid */}
+                            <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4'>
+                                {stats.map((stat, index) => (
+                                    <Card key={index}>
+                                        <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                                            <CardTitle className='text-sm font-medium'>
+                                                {stat.title}
+                                            </CardTitle>
+                                            {stat.icon}
+                                        </CardHeader>
+                                        <CardContent>
+                                            <div className='text-xl font-bold sm:text-2xl'>
+                                                {stat.value}
                                             </div>
-                                        ))}
-                                    </CardContent>
-                                </Card>
+                                            <p className='text-muted-foreground text-xs'>
+                                                <span className='text-green-600'>
+                                                    {stat.change}
+                                                </span>{' '}
+                                                from last month
+                                            </p>
+                                        </CardContent>
+                                    </Card>
+                                ))}
                             </div>
 
-                            {/* Sidebar Content */}
-                            <div className='space-y-4 lg:space-y-6'>
-                                {/* Upcoming Tasks */}
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle className='text-lg'>
-                                            Upcoming Tasks
-                                        </CardTitle>
-                                        <CardDescription>
-                                            Your tasks for the next few days
-                                        </CardDescription>
-                                    </CardHeader>
-                                    <CardContent className='space-y-3'>
-                                        {upcomingTasks.map((task) => (
-                                            <div
-                                                key={task.id}
-                                                className='bg-muted/50 flex flex-col gap-2 rounded-lg p-3'
-                                            >
-                                                <div className='flex items-start justify-between gap-2'>
-                                                    <h5 className='text-sm leading-tight font-medium'>
-                                                        {task.title}
-                                                    </h5>
-                                                    <Badge
-                                                        className={`${getPriorityColor(task.priority)} text-xs`}
-                                                        variant='secondary'
+                            <div className='grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-6'>
+                                {/* Recent Projects */}
+                                <div className='lg:col-span-2'>
+                                    <Card>
+                                        <CardHeader>
+                                            <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
+                                                <CardTitle>
+                                                    Recent Boards
+                                                </CardTitle>
+                                                <Button
+                                                    variant='outline'
+                                                    size='sm'
+                                                >
+                                                    <Link href='/boards'>
+                                                        Boards
+                                                    </Link>
+                                                </Button>
+                                            </div>
+                                        </CardHeader>
+                                        <CardContent className='space-y-4'>
+                                            {boardsData &&
+                                                boardsData!.map((project) => (
+                                                    <div
+                                                        key={project.id}
+                                                        className='bg-card flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-center'
                                                     >
-                                                        {task.priority}
-                                                    </Badge>
-                                                </div>
-                                                <div className='text-muted-foreground flex flex-col gap-1 text-xs'>
-                                                    <span>{task.project}</span>
-                                                    <span className='flex items-center gap-1'>
-                                                        <Clock className='h-3 w-3' />
-                                                        {task.dueDate}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </CardContent>
-                                </Card>
+                                                        <div className='min-w-0 flex-1'>
+                                                            <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
+                                                                <h4 className='truncate font-medium'>
+                                                                    {
+                                                                        project.title
+                                                                    }
+                                                                </h4>
+                                                                <div className='flex items-center gap-2'>
+                                                                    <Badge
+                                                                        className={getStatusColor(
+                                                                            project.status!
+                                                                        )}
+                                                                    >
+                                                                        {
+                                                                            project.status
+                                                                        }
+                                                                    </Badge>
+                                                                    <Button
+                                                                        variant='ghost'
+                                                                        size='sm'
+                                                                    >
+                                                                        <MoreHorizontal className='h-4 w-4' />
+                                                                    </Button>
+                                                                </div>
+                                                            </div>
+                                                            <div className='mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
+                                                                <div className='text-muted-foreground flex items-center gap-4 text-sm'>
+                                                                    <span className='flex items-center gap-1'>
+                                                                        <Calendar className='h-3 w-3' />
+                                                                        {
+                                                                            project.dueDate
+                                                                        }
+                                                                    </span>
+                                                                    <span className='flex items-center gap-1'>
+                                                                        <Users className='h-3 w-3' />
+                                                                        {
+                                                                            project.team
+                                                                        }{' '}
+                                                                        members
+                                                                    </span>
+                                                                </div>
+                                                                <div className='flex min-w-0 items-center gap-2 sm:min-w-[120px]'>
+                                                                    <Progress
+                                                                        value={
+                                                                            project.progress
+                                                                        }
+                                                                        className='flex-1'
+                                                                    />
+                                                                    <span className='text-sm font-medium whitespace-nowrap'>
+                                                                        {
+                                                                            project.progress
+                                                                        }
+                                                                        %
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                        </CardContent>
+                                    </Card>
+                                </div>
 
-                                {/* Team Activity */}
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle className='text-lg'>
-                                            Team Activity
-                                        </CardTitle>
-                                        <CardDescription>
-                                            Recent updates from your team
-                                        </CardDescription>
-                                    </CardHeader>
-                                    <CardContent className='space-y-3'>
-                                        {teamActivity.map((activity, index) => (
-                                            <div
-                                                key={index}
-                                                className='flex items-start space-x-3'
-                                            >
-                                                <Avatar className='mt-1 h-6 w-6'>
-                                                    <AvatarFallback className='bg-gradient-to-br from-blue-500 to-purple-500 text-xs text-white'>
-                                                        {activity.user
-                                                            .split(' ')
-                                                            .map((n) => n[0])
-                                                            .join('')}
-                                                    </AvatarFallback>
-                                                </Avatar>
-                                                <div className='min-w-0 flex-1 text-sm'>
-                                                    <span className='font-medium'>
-                                                        {activity.user}
-                                                    </span>{' '}
-                                                    <span className='text-muted-foreground'>
-                                                        {activity.action}{' '}
-                                                        in{' '}
-                                                    </span>
-                                                    <span className='font-medium'>
-                                                        {activity.project}
-                                                    </span>
-                                                    <div className='text-muted-foreground mt-1 text-xs'>
-                                                        {activity.time}
+                                {/* Sidebar Content */}
+                                <div className='space-y-4 lg:space-y-6'>
+                                    {/* Upcoming Tasks */}
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle className='text-lg'>
+                                                Upcoming Tasks
+                                            </CardTitle>
+                                            <CardDescription>
+                                                Your tasks for the next few days
+                                            </CardDescription>
+                                        </CardHeader>
+                                        <CardContent className='space-y-3'>
+                                            {upcomingTasks.map((task) => (
+                                                <div
+                                                    key={task.id}
+                                                    className='bg-muted/50 flex flex-col gap-2 rounded-lg p-3'
+                                                >
+                                                    <div className='flex items-start justify-between gap-2'>
+                                                        <h5 className='text-sm leading-tight font-medium'>
+                                                            {task.title}
+                                                        </h5>
+                                                        <Badge
+                                                            className={`${getPriorityColor(task.priority)} text-xs`}
+                                                            variant='secondary'
+                                                        >
+                                                            {task.priority}
+                                                        </Badge>
+                                                    </div>
+                                                    <div className='text-muted-foreground flex flex-col gap-1 text-xs'>
+                                                        <span>
+                                                            {task.project}
+                                                        </span>
+                                                        <span className='flex items-center gap-1'>
+                                                            <Clock className='h-3 w-3' />
+                                                            {task.dueDate}
+                                                        </span>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        ))}
-                                    </CardContent>
-                                </Card>
+                                            ))}
+                                        </CardContent>
+                                    </Card>
+
+                                    {/* Team Activity */}
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle className='text-lg'>
+                                                Team Activity
+                                            </CardTitle>
+                                            <CardDescription>
+                                                Recent updates from your team
+                                            </CardDescription>
+                                        </CardHeader>
+                                        <CardContent className='space-y-3'>
+                                            {teamActivity.map(
+                                                (activity, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className='flex items-start space-x-3'
+                                                    >
+                                                        <Avatar className='mt-1 h-6 w-6'>
+                                                            <AvatarFallback className='bg-gradient-to-br from-blue-500 to-purple-500 text-xs text-white'>
+                                                                {activity.user
+                                                                    .split(' ')
+                                                                    .map(
+                                                                        (n) =>
+                                                                            n[0]
+                                                                    )
+                                                                    .join('')}
+                                                            </AvatarFallback>
+                                                        </Avatar>
+                                                        <div className='min-w-0 flex-1 text-sm'>
+                                                            <span className='font-medium'>
+                                                                {activity.user}
+                                                            </span>{' '}
+                                                            <span className='text-muted-foreground'>
+                                                                {
+                                                                    activity.action
+                                                                }{' '}
+                                                                in{' '}
+                                                            </span>
+                                                            <span className='font-medium'>
+                                                                {
+                                                                    activity.project
+                                                                }
+                                                            </span>
+                                                            <div className='text-muted-foreground mt-1 text-xs'>
+                                                                {activity.time}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )
+                                            )}
+                                        </CardContent>
+                                    </Card>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </SidebarInset>
-            </div>
-        </SidebarProvider>
+                    </SidebarInset>
+                </div>
+            </SidebarProvider>
         </ViewTransition>
     );
 };
