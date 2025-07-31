@@ -26,10 +26,12 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { FC } from 'react';
 import { useClerk, useUser } from '@clerk/nextjs';
+import { useBoards } from '@/hooks/boards/useBoards';
 
 export const DashboardSidebar: FC = () => {
     const { user } = useUser();
     const { signOut } = useClerk();
+    const {data} = useBoards(1, true)
 
     const navigation = [
         { title: 'Dashboard', url: '/dashboard', icon: Home },
@@ -39,18 +41,14 @@ export const DashboardSidebar: FC = () => {
         { title: 'Settings', url: '/settings', icon: Settings },
     ];
 
-    const recentProjects = [
-        { id: 1, name: 'Website Redesign', color: 'bg-blue-500' },
-        { id: 2, name: 'Mobile App', color: 'bg-green-500' },
-        { id: 3, name: 'Marketing Campaign', color: 'bg-purple-500' },
-    ];
-
     const teamMembers = [
         { id: 1, name: 'John Doe', initials: 'JD' },
         { id: 2, name: 'Jane Smith', initials: 'JS' },
         { id: 3, name: 'Mike Johnson', initials: 'MJ' },
         { id: 4, name: 'Sarah Wilson', initials: 'SW' },
     ];
+
+    const boardsData = data?.boards
 
     return (
         <Sidebar className='border-r border-gray-200'>
@@ -92,18 +90,18 @@ export const DashboardSidebar: FC = () => {
                     </SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            {recentProjects.map((project) => (
-                                <SidebarMenuItem key={project.id}>
+                            {boardsData && boardsData.map((board) => (
+                                <SidebarMenuItem key={board.id}>
                                     <SidebarMenuButton asChild>
                                         <Link
-                                            href={`/project/${project.id}`}
+                                            href={`/board/${board.id}`}
                                             className='flex items-center space-x-3 rounded-md px-3 py-2 transition-colors hover:bg-gray-100'
                                         >
                                             <div
-                                                className={`h-3 w-3 rounded-full ${project.color}`}
-                                            ></div>
+                                                className={`h-3 w-3 rounded-full ${board.color}`}
+                                            />
                                             <span className='text-sm'>
-                                                {project.name}
+                                                {board.title}
                                             </span>
                                         </Link>
                                     </SidebarMenuButton>
